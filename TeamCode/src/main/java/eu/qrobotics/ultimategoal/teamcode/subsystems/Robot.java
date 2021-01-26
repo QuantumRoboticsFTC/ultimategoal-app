@@ -23,6 +23,12 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
     private LynxModule hub1;
     private LynxModule hub2;
 
+    public Drivetrain drive;
+    public Intake intake;
+    public Buffer buffer;
+    public Outtake outtake;
+    public WobbleGoalGrabber wobbleGoalGrabber;
+
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
     private ExecutorService subsystemUpdateExecutor;
@@ -72,15 +78,48 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         dashboard.setTelemetryTransmissionInterval(25);
 
         hub1 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 1");
-        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 3");
+//        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 3");
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
         //region Initialize subsystems
         subsystems = new ArrayList<>();
 
-        // TODO: Initialize subsystems
+        try {
+            drive = new Drivetrain(opMode.hardwareMap, this, isAutonomous);
+            subsystems.add(drive);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping Drivetrain");
+        }
+
+        try {
+            intake = new Intake(opMode.hardwareMap, this);
+            subsystems.add(intake);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping Intake");
+        }
+
+        try {
+            buffer = new Buffer(opMode.hardwareMap, this);
+            subsystems.add(buffer);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping Buffer");
+        }
+
+        try {
+            outtake = new Outtake(opMode.hardwareMap, this);
+            subsystems.add(outtake);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping Outtake");
+        }
+
+        try {
+            wobbleGoalGrabber = new WobbleGoalGrabber(opMode.hardwareMap, this);
+            subsystems.add(wobbleGoalGrabber);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping WobbleGoalGrabber");
+        }
         //endregion
 
         // Initialize update thread
