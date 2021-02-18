@@ -1,12 +1,16 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import eu.qrobotics.ultimategoal.teamcode.sensors.Rev2mDistanceSensorAsync;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Config
 public class Buffer implements Subsystem {
     public enum BufferMode {
         DOWN,
@@ -28,8 +32,8 @@ public class Buffer implements Subsystem {
 
     public static double BUFFER_DOWN_POSITION = 0.65;
     public static double BUFFER_RING1_POSITION = 0.57;
-    public static double BUFFER_RING2_POSITION = 0.59;
-    public static double BUFFER_RING3_POSITION = 0.61;
+    public static double BUFFER_RING2_POSITION = 0.60;
+    public static double BUFFER_RING3_POSITION = 0.62;
     public static double BUFFER_OUTTAKE_POSITION = 0.515;
 
     public static double BUFFER_PUSHER_IDLE_POSITION = 1.0;
@@ -46,24 +50,55 @@ public class Buffer implements Subsystem {
 
     private Servo bufferServo;
     private Servo bufferPusherServo;
-    private DistanceSensor bufferRingSensor;
+    private Rev2mDistanceSensorAsync bufferRingSensor;
 
     private Robot robot;
+
+    private MovingStatistics ringSensorValues;
 
     public Buffer(HardwareMap hardwareMap, Robot robot) {
         this.robot = robot;
 
         bufferServo = hardwareMap.get(Servo.class, "bufferServo");
         bufferPusherServo = hardwareMap.get(Servo.class, "bufferPusherServo");
-        bufferRingSensor = hardwareMap.get(DistanceSensor.class, "bufferRingSensor");
+        bufferRingSensor = hardwareMap.get(Rev2mDistanceSensorAsync.class, "bufferRingSensor");
 
         bufferMode = BufferMode.DOWN;
         bufferPusherMode = BufferPusherMode.IDLE;
         bufferPusherState = BufferPusherState.IDLE;
+
+        ringSensorValues = new MovingStatistics(4);
+        ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
     }
+
+//    public long lastSensorTime = 0;
+
+    public static boolean SENSOR_ENABLE = true;
+    public static double SENSOR_WAIT = 50;
+
+    private ElapsedTime sensorTime = new ElapsedTime();
+
+//    public MovingStatistics avgSensorTime1 = new MovingStatistics(1);
+//    public MovingStatistics avgSensorTime10 = new MovingStatistics(10);
+//    public MovingStatistics avgSensorTime250 = new MovingStatistics(250);
 
     @Override
     public void update() {
+//        long start = System.currentTimeMillis();
+        double distance = -1;
+        if(SENSOR_ENABLE) {
+            if(sensorTime.milliseconds() > SENSOR_WAIT) {
+                sensorTime.reset();
+                distance = bufferRingSensor.getDistance(DistanceUnit.MM);
+            }
+        }
+//        lastSensorTime = System.currentTimeMillis() - start;
+//        avgSensorTime1.add(lastSensorTime);
+//        avgSensorTime10.add(lastSensorTime);
+//        avgSensorTime250.add(lastSensorTime);
+        if(distance >= 0) {
+            ringSensorValues.add(distance);
+        }
         switch (bufferMode) {
             case DOWN:
                 bufferServo.setPosition(BUFFER_DOWN_POSITION);
@@ -136,14 +171,14 @@ public class Buffer implements Subsystem {
     }
 
     public int getRingCount() {
-        double distance = bufferRingSensor.getDistance(DistanceUnit.MM);
-        if(distance > 110) {
+        double distance = ringSensorValues.getMean();
+        if(distance > 120) {
             return 0;
         }
-        if(distance > 90) {
+        if(distance > 95) {
             return 1;
         }
-        if(distance > 65) {
+        if(distance > 70) {
             return 2;
         }
         return 3;
