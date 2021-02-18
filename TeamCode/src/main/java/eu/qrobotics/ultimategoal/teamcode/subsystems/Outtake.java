@@ -17,10 +17,12 @@ public class Outtake implements Subsystem {
     private static double READY_RPM_THRESHOLD = 100;
 
     public static Vector2d TOWER_GOAL_POS = new Vector2d(72, -36);
-    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(100, 0, 15, 15);
+    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(100, 0, 17, 15);
 
-    public static double kA = 4;
-    public static double kB = 3035;
+    public static double kA = 0.002944254;
+    public static double kB = -0.7317014;
+    public static double kC = 57.38531;
+    public static double kD = 1880.281;
 
     public OuttakeMode outtakeMode;
     public double overrideRPM;
@@ -67,10 +69,10 @@ public class Outtake implements Subsystem {
     }
 
     public double getTargetRPM() {
-        if(overrideRPM > 0) {
+        if (overrideRPM > 0) {
             return overrideRPM;
         }
-        return kA * getDistance() + kB;
+        return kA * getDistance() * getDistance() * getDistance() + kB * getDistance() * getDistance() + kC * getDistance() + kD;
     }
 
     public double getCurrentRPM() {
