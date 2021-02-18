@@ -1,11 +1,14 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferPusherMode;
@@ -32,8 +35,12 @@ public class TeleOP extends OpMode {
     StickyGamepad stickyGamepad1 = null;
     StickyGamepad stickyGamepad2 = null;
 
+    MultipleTelemetry telemetry;
+
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
+
         robot = new Robot(this, false);
 //        robot.drive.fieldCentric = true;
         stickyGamepad1 = new StickyGamepad(gamepad1);
@@ -48,6 +55,8 @@ public class TeleOP extends OpMode {
         robot.start();
     }
 
+    private ElapsedTime wobbleGrabTimer = new ElapsedTime();
+
     @Override
     public void loop() {
         stickyGamepad1.update();
@@ -55,16 +64,29 @@ public class TeleOP extends OpMode {
 
         //region Driver 1 controls
 
-        switch (driveMode) {
-            case NORMAL:
-                robot.drive.setMotorPowersFromGamepad(gamepad1, 1);
-                break;
-            case SLOW:
-                robot.drive.setMotorPowersFromGamepad(gamepad1, 0.7);
-                break;
-            case SUPER_SLOW:
-                robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
-                break;
+        if(!robot.drive.isBusy()) {
+            switch (driveMode) {
+                case NORMAL:
+                    robot.drive.setMotorPowersFromGamepad(gamepad1, 1);
+                    break;
+                case SLOW:
+                    robot.drive.setMotorPowersFromGamepad(gamepad1, 0.7);
+                    break;
+                case SUPER_SLOW:
+                    robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
+                    break;
+            }
+            if (stickyGamepad1.x) {
+                robot.drive.followTrajectory(makeTowerLaunchTrajectory());
+            }
+            if(stickyGamepad1.y) {
+                robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
+            }
+        }
+        else {
+            if(stickyGamepad1.x) {
+                robot.drive.cancelTrajectory();
+            }
         }
 
         if (stickyGamepad1.a) {
@@ -88,13 +110,18 @@ public class TeleOP extends OpMode {
 
         if (stickyGamepad1.dpad_up) {
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.CLOSE;
-            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
+            wobbleGrabTimer.reset();
         }
         if (stickyGamepad1.dpad_right) {
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.OPEN;
         }
         if (stickyGamepad1.dpad_down) {
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.DOWN;
+            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.OPEN;
+        }
+
+        if (wobbleGrabTimer.seconds() > 0.5 && wobbleGrabTimer.seconds() < 0.6) {
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
         }
 
         //endregion
@@ -127,6 +154,12 @@ public class TeleOP extends OpMode {
 
         // endregion
 
+//        telemetry.addData("Last sensor time", robot.buffer.lastSensorTime);
+//        telemetry.addData("Avg250 sensor time", robot.buffer.avgSensorTime250.getMean());
+//        telemetry.addData("Avg10 sensor time", robot.buffer.avgSensorTime10.getMean());
+//        telemetry.addData("Avg1 sensor time", robot.buffer.avgSensorTime1.getMean());
+//        telemetry.addData("Avg250 robot time", robot.top250.getMean() * 1000);
+//        telemetry.addData("Avg10 robot time", robot.top10.getMean() * 1000);
         telemetry.addData("Buffer rings", robot.buffer.getRingCount());
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
@@ -138,6 +171,54 @@ public class TeleOP extends OpMode {
         telemetry.addData("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
         telemetry.addData("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
         telemetry.update();
+    }
+
+    private static double LAUNCH_LINE_X = 0;
+    private static double OPTIMAL_LAUNCH_DISTANCE = 80;
+    private static Vector2d LAUNCH_SEGMENT_A = new Vector2d(
+            LAUNCH_LINE_X,
+            Outtake.TOWER_GOAL_POS.getY()
+                    + Math.sqrt(OPTIMAL_LAUNCH_DISTANCE * OPTIMAL_LAUNCH_DISTANCE -
+                    (LAUNCH_LINE_X - Outtake.TOWER_GOAL_POS.getX()) * (LAUNCH_LINE_X - Outtake.TOWER_GOAL_POS.getX())));
+    private static Vector2d LAUNCH_SEGMENT_B = new Vector2d(
+            LAUNCH_LINE_X,
+            Outtake.TOWER_GOAL_POS.getY()
+                    - Math.sqrt(OPTIMAL_LAUNCH_DISTANCE * OPTIMAL_LAUNCH_DISTANCE -
+                    (LAUNCH_LINE_X - Outtake.TOWER_GOAL_POS.getX()) * (LAUNCH_LINE_X - Outtake.TOWER_GOAL_POS.getX())));
+
+    private Trajectory makeTowerLaunchTrajectory() {
+        Vector2d P = robot.drive.getPoseEstimate().vec();
+        Vector2d toTower = Outtake.TOWER_GOAL_POS.minus(P);
+        Vector2d targetLocation;
+        if(P.getX() <= LAUNCH_LINE_X && toTower.norm() <= OPTIMAL_LAUNCH_DISTANCE) {
+            targetLocation = P.plus(new Vector2d(1, 1));
+        }
+        else {
+            double t = -((LAUNCH_SEGMENT_B.minus(LAUNCH_SEGMENT_A)).dot(LAUNCH_SEGMENT_A.minus(P)))
+                    / ((LAUNCH_SEGMENT_B.minus(LAUNCH_SEGMENT_A)).dot(LAUNCH_SEGMENT_B.minus(LAUNCH_SEGMENT_A)));
+            t = Math.max(0, Math.min(1, t));
+            Vector2d line = LAUNCH_SEGMENT_A.times(1 - t).plus(LAUNCH_SEGMENT_B.times(t));
+
+            Vector2d circle = Outtake.TOWER_GOAL_POS.plus(toTower.div(toTower.norm()).unaryMinus().times(OPTIMAL_LAUNCH_DISTANCE));
+
+            if(circle.getX() > LAUNCH_LINE_X) {
+                targetLocation = line;
+            }
+            else {
+                if(P.distTo(circle) < P.distTo(line)) {
+                    targetLocation = circle;
+                }
+                else {
+                    targetLocation = line;
+                }
+            }
+        }
+
+        double targetAngle = Outtake.TOWER_GOAL_POS.minus(targetLocation).angle() - Math.toRadians(7);
+
+        return new TrajectoryBuilder(robot.drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                .lineToLinearHeading(new Pose2d(targetLocation, targetAngle))
+                .build();
     }
 
     @Override

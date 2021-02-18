@@ -78,10 +78,10 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         dashboard.setTelemetryTransmissionInterval(25);
 
         hub1 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 1");
-//        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 3");
+        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 2");
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
         //region Initialize subsystems
         subsystems = new ArrayList<>();

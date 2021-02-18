@@ -1,5 +1,6 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.tests;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -35,6 +36,9 @@ public class OuttakeTest extends OpMode {
         if(stickyGamepad1.b) {
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
         }
+        if(stickyGamepad1.y) {
+            robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
+        }
         if(stickyGamepad1.dpad_up) {
             robot.outtake.overrideRPM += 100;
         }
@@ -42,10 +46,10 @@ public class OuttakeTest extends OpMode {
             robot.outtake.overrideRPM -= 100;
         }
         if(stickyGamepad1.dpad_left) {
-            robot.outtake.overrideRPM -= 1;
+            robot.outtake.overrideRPM -= 10;
         }
         if(stickyGamepad1.dpad_right) {
-            robot.outtake.overrideRPM += 1;
+            robot.outtake.overrideRPM += 10;
         }
         if(stickyGamepad1.x) {
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;

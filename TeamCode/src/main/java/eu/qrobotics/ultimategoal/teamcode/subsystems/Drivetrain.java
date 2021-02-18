@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
@@ -20,7 +19,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -37,17 +35,15 @@ import eu.qrobotics.ultimategoal.teamcode.util.MecanumUtil;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.BASE_CONSTRAINTS;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.HEADING_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_MULTIPLIER;
-import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MOTOR_VELO_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.RUN_USING_ENCODER;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRACK_WIDTH;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRANSLATIONAL_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.WHEEL_BASE;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.encoderTicksToInches;
-import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.getMotorVelocityF;
-import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kV;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kA;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kStatic;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kV;
 
 @Config
 public class Drivetrain extends MecanumDrive implements Subsystem {
@@ -95,14 +91,12 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         mode = Mode.IDLE;
 
         // Initialize autonomous specific stuff
-        if (isAutonomous) {
-            turnController = new PIDFController(HEADING_PID);
-            turnController.setInputBounds(0, 2 * Math.PI);
+        turnController = new PIDFController(HEADING_PID);
+        turnController.setInputBounds(0, 2 * Math.PI);
 
-            constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, LATERAL_PID, HEADING_PID);
-        } else
-            motorPowers = new double[]{0.0, 0.0, 0.0, 0.0};
+        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
+        motorPowers = new double[]{0.0, 0.0, 0.0, 0.0};
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -125,7 +119,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        //setLocalizer(new Odometry(hardwareMap));
+        setLocalizer(new Odometry(hardwareMap));
     }
 
     public void turn(double angle) {
@@ -156,6 +150,10 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         waitForIdle();
     }
 
+    public void cancelTrajectory() {
+        mode = Mode.IDLE;
+    }
+
     public Pose2d getLastError() {
         switch (mode) {
             case FOLLOW_TRAJECTORY:
@@ -172,7 +170,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         MecanumUtil.Motion motion = MecanumUtil.joystickToMotion(gg.left_stick_x, gg.left_stick_y,
                 gg.right_stick_x, gg.right_stick_y);
         if (fieldCentric) {
-           // motion = motion.toFieldCentricMotion(autonomousEndPose.getHeading() + imu.getAngularOrientation().firstAngle);
+            motion = motion.toFieldCentricMotion(getPoseEstimate().getHeading());
         }
         MecanumUtil.Wheels wh = MecanumUtil.motionToWheels(motion).scaleWheelPower(scale);
         motorPowers[0] = wh.frontLeft;
@@ -188,11 +186,6 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
     @Override
     public void update() {
         updatePoseEstimate();
-
-        if (!isAutonomous) {
-            setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
-            return;
-        }
 
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
@@ -213,7 +206,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
 
         switch (mode) {
             case IDLE:
-                // do nothing
+                setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
                 break;
             case TURN: {
                 double t = clock.seconds() - turnStart;
@@ -264,7 +257,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             }
         }
 
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet);
     }
 
     @Override
@@ -306,9 +299,8 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         return wheelPositions;
     }
 
-    public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
-        PIDFCoefficients coefficients = leftFront.getPIDFCoefficients(runMode);
-        return new PIDCoefficients(coefficients.p, coefficients.i, coefficients.d);
+    public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {
+        return leftFront.getPIDFCoefficients(runMode);
     }
 
     public void setPIDCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
