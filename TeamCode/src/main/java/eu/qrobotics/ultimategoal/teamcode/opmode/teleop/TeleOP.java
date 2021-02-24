@@ -82,6 +82,9 @@ public class TeleOP extends OpMode {
             if(stickyGamepad1.y) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
+            if(stickyGamepad1.b) {
+                robot.drive.turn(-0.175);
+            }
         }
         else {
             if(stickyGamepad1.x) {
@@ -94,15 +97,10 @@ public class TeleOP extends OpMode {
                 driveMode = DriveMode.SLOW;
             else
                 driveMode = DriveMode.NORMAL;
-        } else if (stickyGamepad1.b) {
-            if (driveMode != DriveMode.SUPER_SLOW)
-                driveMode = DriveMode.SUPER_SLOW;
-            else
-                driveMode = DriveMode.NORMAL;
         }
 
         if (stickyGamepad1.left_bumper) {
-            driveMode = DriveMode.SLOW;
+            driveMode = DriveMode.SUPER_SLOW;
         }
         if (stickyGamepad1.right_bumper) {
             driveMode = DriveMode.NORMAL;
