@@ -17,6 +17,7 @@ public class Outtake implements Subsystem {
     private static double READY_RPM_THRESHOLD = 100;
 
     public static Vector2d TOWER_GOAL_POS = new Vector2d(72, -36);
+    public static Vector2d POWERSHOT_POS = new Vector2d(72, -10);
     public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(100, 0, 17, 15);
 
     public static double kA = 0.002944254;

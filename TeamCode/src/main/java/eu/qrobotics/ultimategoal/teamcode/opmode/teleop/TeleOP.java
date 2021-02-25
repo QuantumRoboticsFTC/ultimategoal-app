@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferMode;
@@ -79,26 +80,27 @@ public class TeleOP extends OpMode {
             if (stickyGamepad1.x) {
                 robot.drive.followTrajectory(makeTowerLaunchTrajectory());
             }
-            if(stickyGamepad1.y) {
+            if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
+            if(stickyGamepad1.y) {
+                robot.drive.followTrajectory(makePowershotLaunchTrajectory());
+            }
+            if(stickyGamepad1.a) {
+                robot.drive.turn(Math.toRadians(5));
+            }
             if(stickyGamepad1.b) {
-                robot.drive.turn(-0.175);
+                robot.drive.turn(Math.toRadians(-5));
             }
         }
         else {
             if(stickyGamepad1.x) {
                 robot.drive.cancelTrajectory();
             }
+            if(stickyGamepad1.y) {
+                robot.drive.cancelTrajectory();
+            }
         }
-
-        if (stickyGamepad1.a) {
-            if (driveMode != DriveMode.SLOW)
-                driveMode = DriveMode.SLOW;
-            else
-                driveMode = DriveMode.NORMAL;
-        }
-
         if (stickyGamepad1.left_bumper) {
             driveMode = DriveMode.SUPER_SLOW;
         }
@@ -216,6 +218,11 @@ public class TeleOP extends OpMode {
 
         return new TrajectoryBuilder(robot.drive.getPoseEstimate(), BASE_CONSTRAINTS)
                 .lineToLinearHeading(new Pose2d(targetLocation, targetAngle))
+                .build();
+    }
+    private Trajectory makePowershotLaunchTrajectory() {
+        return new TrajectoryBuilder(robot.drive.getPoseEstimate(), BASE_CONSTRAINTS)
+                .lineToLinearHeading(new Pose2d(-20, -20, Math.toRadians(0)))
                 .build();
     }
 
