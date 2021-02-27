@@ -1,9 +1,11 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class Intake implements Subsystem {
     public enum IntakeMode {
         IN,
@@ -32,8 +34,11 @@ public class Intake implements Subsystem {
         intakeMode = IntakeMode.IDLE;
     }
 
+    public static boolean IS_DISABLED = false;
+
     @Override
     public void update() {
+        if(IS_DISABLED) return;
         if(robot.buffer.bufferMode != Buffer.BufferMode.COLLECT && intakeMode == IntakeMode.IN) {
             intakeMode = IntakeMode.IDLE;
         }

@@ -1,5 +1,6 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+@Config
 public class Outtake implements Subsystem {
     public enum OuttakeMode {
         ON,
@@ -45,8 +47,11 @@ public class Outtake implements Subsystem {
         overrideRPM = 0;
     }
 
+    public static boolean IS_DISABLED = false;
+
     @Override
     public void update() {
+        if(IS_DISABLED) return;
         switch (outtakeMode) {
             case OFF:
                 outtakeMotor.setPower(0);

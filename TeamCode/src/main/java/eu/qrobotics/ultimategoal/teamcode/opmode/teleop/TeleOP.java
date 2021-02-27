@@ -154,12 +154,10 @@ public class TeleOP extends OpMode {
 
         // endregion
 
-//        telemetry.addData("Last sensor time", robot.buffer.lastSensorTime);
-//        telemetry.addData("Avg250 sensor time", robot.buffer.avgSensorTime250.getMean());
-//        telemetry.addData("Avg10 sensor time", robot.buffer.avgSensorTime10.getMean());
-//        telemetry.addData("Avg1 sensor time", robot.buffer.avgSensorTime1.getMean());
-//        telemetry.addData("Avg250 robot time", robot.top250.getMean() * 1000);
-//        telemetry.addData("Avg10 robot time", robot.top10.getMean() * 1000);
+        telemetry.addData("Mean250 sensor time", robot.buffer.avgSensorTime10.getMean() * 1000);
+        telemetry.addData("Dev250 sensor time", robot.buffer.avgSensorTime10.getStandardDeviation() * 1000);
+        telemetry.addData("Mean250 robot time", robot.top10.getMean() * 1000);
+        telemetry.addData("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
         telemetry.addData("Buffer rings", robot.buffer.getRingCount());
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());

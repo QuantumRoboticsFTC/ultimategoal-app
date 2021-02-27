@@ -67,24 +67,31 @@ public class Buffer implements Subsystem {
         bufferPusherMode = BufferPusherMode.IDLE;
         bufferPusherState = BufferPusherState.IDLE;
 
-        ringSensorValues = new MovingStatistics(4);
+        ringSensorValues = new MovingStatistics(2);
         ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
     }
 
-//    public long lastSensorTime = 0;
+    public double lastSensorTime = 0;
 
     public static boolean SENSOR_ENABLE = true;
     public static double SENSOR_WAIT = 50;
 
     private ElapsedTime sensorTime = new ElapsedTime();
 
-//    public MovingStatistics avgSensorTime1 = new MovingStatistics(1);
-//    public MovingStatistics avgSensorTime10 = new MovingStatistics(10);
-//    public MovingStatistics avgSensorTime250 = new MovingStatistics(250);
+    public MovingStatistics avgSensorTime1 = new MovingStatistics(1);
+    public MovingStatistics avgSensorTime10 = new MovingStatistics(10);
+    public MovingStatistics avgSensorTime250 = new MovingStatistics(250);
+
+    private static double getCurrentTime() {
+        return System.nanoTime() / 1_000_000_000.0;
+    }
+
+    public static boolean IS_DISABLED = false;
 
     @Override
     public void update() {
-//        long start = System.currentTimeMillis();
+        if(IS_DISABLED) return;
+        double start = getCurrentTime();
         double distance = -1;
         if(SENSOR_ENABLE) {
             if(sensorTime.milliseconds() > SENSOR_WAIT) {
@@ -92,10 +99,10 @@ public class Buffer implements Subsystem {
                 distance = bufferRingSensor.getDistance(DistanceUnit.MM);
             }
         }
-//        lastSensorTime = System.currentTimeMillis() - start;
-//        avgSensorTime1.add(lastSensorTime);
-//        avgSensorTime10.add(lastSensorTime);
-//        avgSensorTime250.add(lastSensorTime);
+        lastSensorTime = getCurrentTime() - start;
+        avgSensorTime1.add(lastSensorTime);
+        avgSensorTime10.add(lastSensorTime);
+        avgSensorTime250.add(lastSensorTime);
         if(distance >= 0) {
             ringSensorValues.add(distance);
         }

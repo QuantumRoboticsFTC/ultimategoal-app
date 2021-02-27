@@ -183,8 +183,11 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         return motorPowers;
     }
 
+    public static boolean IS_DISABLED = false;
+
     @Override
     public void update() {
+        if(IS_DISABLED) return;
         updatePoseEstimate();
 
         Pose2d currentPose = getPoseEstimate();

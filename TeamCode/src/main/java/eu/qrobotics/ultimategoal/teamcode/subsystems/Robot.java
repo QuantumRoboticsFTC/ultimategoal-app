@@ -46,6 +46,10 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 startTime = getCurrentTime(); // Get start time of update
+//                hub1.clearBulkCache();
+//                hub2.clearBulkCache();
+//                hub1.getBulkData();
+//                hub2.getBulkData();
                 for (Subsystem subsystem : subsystems) { // Update all subsystems
                     if (subsystem == null) continue;
                     try {
