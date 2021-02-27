@@ -23,8 +23,8 @@ public class WobbleGoalGrabber implements Subsystem {
     public static double ARM_UP_POSITION = 0.55;
     public static double ARM_INITIAL_POSITION = 0.7;
 
-    public static double CLAW_OPEN_POSITION = 0.4;
-    public static double CLAW_CLOSE_POSITION = 0.2;
+    public static double CLAW_OPEN_POSITION = 0.25;
+    public static double CLAW_CLOSE_POSITION = 0.6;
 
     public WobbleGoalArmMode wobbleGoalArmMode;
     public WobbleGoalClawMode wobbleGoalClawMode;

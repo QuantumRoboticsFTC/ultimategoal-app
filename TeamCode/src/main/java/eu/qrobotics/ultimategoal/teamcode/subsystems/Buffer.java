@@ -31,8 +31,8 @@ public class Buffer implements Subsystem {
     }
 
     public static double BUFFER_DOWN_POSITION = 0.65;
-    public static double BUFFER_RING1_POSITION = 0.57;
-    public static double BUFFER_RING2_POSITION = 0.60;
+    public static double BUFFER_RING1_POSITION = 0.6;
+    public static double BUFFER_RING2_POSITION = 0.58;
     public static double BUFFER_RING3_POSITION = 0.62;
     public static double BUFFER_OUTTAKE_POSITION = 0.515;
 
