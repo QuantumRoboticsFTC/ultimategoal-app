@@ -138,6 +138,7 @@ public class TeleOP extends OpMode {
         if (stickyGamepad2.a) {
             robot.buffer.bufferMode = BufferMode.COLLECT;
             robot.outtake.outtakeMode = OuttakeMode.OFF;
+            robot.intake.intakeMode = IntakeMode.IN;
         }
 
         if(stickyGamepad2.b) {
@@ -152,6 +153,12 @@ public class TeleOP extends OpMode {
             robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_ALL;
         }
 
+        if(stickyGamepad2.left_bumper) {
+            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
+        }
+        if(stickyGamepad2.right_bumper) {
+            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+        }
         // endregion
 
         telemetry.addData("Mean250 sensor time", robot.buffer.avgSensorTime10.getMean() * 1000);
@@ -159,6 +166,9 @@ public class TeleOP extends OpMode {
         telemetry.addData("Mean250 robot time", robot.top10.getMean() * 1000);
         telemetry.addData("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
         telemetry.addData("Buffer rings", robot.buffer.getRingCount());
+        telemetry.addData("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
+        telemetry.addData("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
+        telemetry.addData("Outtake target", robot.outtake.outtakeTarget);
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
         telemetry.addData("Outtake ready?", robot.outtake.isReady());
