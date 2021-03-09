@@ -2,27 +2,37 @@ package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.3, 2.6, 2.6);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 2.6, 2.6);
     public static PIDCoefficients LATERAL_PID = new PIDCoefficients(0.3, 2.6, 2.6);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0.35);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5.7, 0, 1.7);
 
     public static double LATERAL_MULTIPLIER = 1;
     public static double WHEEL_BASE = 13.25;
 
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            60.0, 40.0, 0.0,
-            Math.toRadians(360.0), Math.toRadians(120.0), 0.0
-    );
+    public static double WHEEL_RADIUS = 1.9685; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 15.89; // in
 
-    public static DriveConstraints SLOW_CONSTRAINTS = new DriveConstraints(
-            30.0, 20.0, 0.0,
-            Math.toRadians(60.0), Math.toRadians(30.0), 0.0
-    );
+    public static double MAX_ANG_VEL = Math.toRadians(360);
+    public static double MAX_ANG_ACCEL = Math.toRadians(270);
+
+    public static TrajectoryVelocityConstraint AUTOAIM_VEL_CONSTRAINT = new MecanumVelocityConstraint(80, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint AUTOAIM_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(100);
+
+    public static TrajectoryVelocityConstraint BASE_VEL_CONSTRAINT = new MecanumVelocityConstraint(40, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint BASE_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(60);
+
+    public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(1, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint SLOW_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(20);
+
 
     public static final double TICKS_PER_REV = 383.6;
     public static final double MAX_RPM = 435;
@@ -30,10 +40,6 @@ public class DriveConstants {
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
-
-    public static double WHEEL_RADIUS = 1.9685; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 15.89; // in
 
     public static double kV = 0.01027;
     public static double kA = 0.00004;

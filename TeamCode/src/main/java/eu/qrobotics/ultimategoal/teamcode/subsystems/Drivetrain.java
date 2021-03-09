@@ -16,8 +16,6 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,9 +30,10 @@ import java.util.List;
 import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.MecanumUtil;
 
-import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.BASE_CONSTRAINTS;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.HEADING_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_MULTIPLIER;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_ACCEL;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_VEL;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MOTOR_VELO_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.RUN_USING_ENCODER;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRACK_WIDTH;
@@ -63,7 +62,6 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
     private MotionProfile turnProfile;
     private double turnStart;
 
-    private DriveConstraints constraints;
     private TrajectoryFollower follower;
 
     private List<Double> lastWheelPositions;
@@ -94,7 +92,6 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
         motorPowers = new double[]{0.0, 0.0, 0.0, 0.0};
 
@@ -127,9 +124,8 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
-                constraints.maxAngVel,
-                constraints.maxAngAccel,
-                constraints.maxAngJerk
+                MAX_ANG_VEL,
+                MAX_ANG_ACCEL
         );
         turnStart = clock.seconds();
         mode = Mode.TURN;
@@ -168,7 +164,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
 
     public void setMotorPowersFromGamepad(Gamepad gg, double scale) {
         MecanumUtil.Motion motion = MecanumUtil.joystickToMotion(gg.left_stick_x, gg.left_stick_y,
-                gg.right_stick_x * 0.8, gg.right_stick_y * 0.8);
+                gg.right_stick_x, gg.right_stick_y);
         if (fieldCentric) {
             motion = motion.toFieldCentricMotion(getPoseEstimate().getHeading());
         }
@@ -260,7 +256,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             }
         }
 
-//        dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet);
     }
 
     @Override
