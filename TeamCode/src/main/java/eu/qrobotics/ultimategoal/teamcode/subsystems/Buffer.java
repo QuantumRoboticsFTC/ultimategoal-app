@@ -1,8 +1,7 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
-import eu.qrobotics.ultimategoal.teamcode.sensors.Rev2mDistanceSensorAsync;
-
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,14 +29,14 @@ public class Buffer implements Subsystem {
         RETRACTING,
     }
 
-    public static double BUFFER_DOWN_POSITION = 0.65;
-    public static double BUFFER_RING1_POSITION = 0.6;
-    public static double BUFFER_RING2_POSITION = 0.58;
-    public static double BUFFER_RING3_POSITION = 0.62;
+    public static double BUFFER_DOWN_POSITION = 0.64;
+    public static double BUFFER_RING1_POSITION = 0.61;
+    public static double BUFFER_RING2_POSITION = 0.61;
+    public static double BUFFER_RING3_POSITION = 0.61;
     public static double BUFFER_OUTTAKE_POSITION = 0.515;
 
-    public static double BUFFER_PUSHER_IDLE_POSITION = 1.0;
-    public static double BUFFER_PUSHER_PUSH_POSITION = 0.55;
+    public static double BUFFER_PUSHER_IDLE_POSITION = 0.575;
+    public static double BUFFER_PUSHER_PUSH_POSITION = 0.9;
 
     public BufferMode bufferMode;
     public BufferPusherMode bufferPusherMode;
@@ -50,31 +49,31 @@ public class Buffer implements Subsystem {
 
     private Servo bufferServo;
     private Servo bufferPusherServo;
-    private Rev2mDistanceSensorAsync bufferRingSensor;
+    private RevColorSensorV3 bufferRingSensor;
 
     private Robot robot;
 
-    private MovingStatistics ringSensorValues;
+    public MovingStatistics ringSensorValues;
 
     public Buffer(HardwareMap hardwareMap, Robot robot) {
         this.robot = robot;
 
         bufferServo = hardwareMap.get(Servo.class, "bufferServo");
         bufferPusherServo = hardwareMap.get(Servo.class, "bufferPusherServo");
-        bufferRingSensor = hardwareMap.get(Rev2mDistanceSensorAsync.class, "bufferRingSensor");
+        bufferRingSensor = hardwareMap.get(RevColorSensorV3.class, "bufferRingSensor");
 
         bufferMode = BufferMode.DOWN;
         bufferPusherMode = BufferPusherMode.IDLE;
         bufferPusherState = BufferPusherState.IDLE;
 
-        ringSensorValues = new MovingStatistics(2);
+        ringSensorValues = new MovingStatistics(4);
         ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
     }
 
     public double lastSensorTime = 0;
 
     public static boolean SENSOR_ENABLE = true;
-    public static double SENSOR_WAIT = 50;
+    public static double SENSOR_WAIT = 0;
 
     private ElapsedTime sensorTime = new ElapsedTime();
 
@@ -87,6 +86,7 @@ public class Buffer implements Subsystem {
     }
 
     public static boolean IS_DISABLED = false;
+    public double lastDistance = 0;
 
     @Override
     public void update() {
@@ -99,6 +99,7 @@ public class Buffer implements Subsystem {
                 distance = bufferRingSensor.getDistance(DistanceUnit.MM);
             }
         }
+        lastDistance = distance;
         lastSensorTime = getCurrentTime() - start;
         avgSensorTime1.add(lastSensorTime);
         avgSensorTime10.add(lastSensorTime);
@@ -119,8 +120,6 @@ public class Buffer implements Subsystem {
                 }
                 else if(getRingCount() == 2){
                     bufferServo.setPosition(BUFFER_RING3_POSITION);
-                } else {
-                    bufferMode = BufferMode.DOWN;
                 }
                 break;
             case OUTTAKE:
@@ -153,13 +152,13 @@ public class Buffer implements Subsystem {
                 break;
             case PUSHING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_PUSH_POSITION);
-                if (bufferPushTime.seconds() > 0.2) {
+                if (bufferPushTime.seconds() > 0.25) {
                     bufferPusherState = BufferPusherState.RETRACTING;
                 }
                 break;
             case RETRACTING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_IDLE_POSITION);
-                if (bufferPushTime.seconds() > 0.4) {
+                if (bufferPushTime.seconds() > 0.25 + 0.25) {
                     bufferPusherState = BufferPusherState.IDLE;
 
                     if (bufferPusherMode == BufferPusherMode.PUSH_SINGLE) {
@@ -178,14 +177,17 @@ public class Buffer implements Subsystem {
     }
 
     public int getRingCount() {
-        double distance = ringSensorValues.getMean();
-        if(distance > 120) {
+        double mean = ringSensorValues.getMean();
+        double stdev = ringSensorValues.getStandardDeviation();
+
+        double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
+        if(distance > 37.5) {
             return 0;
         }
-        if(distance > 95) {
+        if(distance > 34.75) {
             return 1;
         }
-        if(distance > 70) {
+        if(distance > 30) {
             return 2;
         }
         return 3;
