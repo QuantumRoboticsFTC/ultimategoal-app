@@ -1,7 +1,7 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -49,7 +49,7 @@ public class Buffer implements Subsystem {
 
     private Servo bufferServo;
     private Servo bufferPusherServo;
-    private RevColorSensorV3 bufferRingSensor;
+    private ColorRangeSensor bufferRingSensor;
 
     private Robot robot;
 
@@ -60,13 +60,13 @@ public class Buffer implements Subsystem {
 
         bufferServo = hardwareMap.get(Servo.class, "bufferServo");
         bufferPusherServo = hardwareMap.get(Servo.class, "bufferPusherServo");
-        bufferRingSensor = hardwareMap.get(RevColorSensorV3.class, "bufferRingSensor");
+        bufferRingSensor = hardwareMap.get(ColorRangeSensor.class, "bufferRingSensor");
 
         bufferMode = BufferMode.DOWN;
         bufferPusherMode = BufferPusherMode.IDLE;
         bufferPusherState = BufferPusherState.IDLE;
 
-        ringSensorValues = new MovingStatistics(4);
+        ringSensorValues = new MovingStatistics(16);
         ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
     }
 
@@ -181,13 +181,13 @@ public class Buffer implements Subsystem {
         double stdev = ringSensorValues.getStandardDeviation();
 
         double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 37.5) {
+        if(distance > 135) {
             return 0;
         }
-        if(distance > 34.75) {
+        if(distance > 126) {
             return 1;
         }
-        if(distance > 30) {
+        if(distance > 119) {
             return 2;
         }
         return 3;
