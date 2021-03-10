@@ -32,6 +32,7 @@ import eu.qrobotics.ultimategoal.teamcode.util.MecanumUtil;
 
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.HEADING_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_MULTIPLIER;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_PID;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_ACCEL;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_VEL;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MOTOR_VELO_PID;
@@ -92,7 +93,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, LATERAL_PID, HEADING_PID, new Pose2d(0, 0, 0), 5.0);
         motorPowers = new double[]{0.0, 0.0, 0.0, 0.0};
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -117,6 +118,8 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         }
 
         setLocalizer(new Odometry(hardwareMap));
+
+        setPoseEstimate(autonomousEndPose);
     }
 
     public void turn(double angle) {
@@ -205,7 +208,12 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
 
         switch (mode) {
             case IDLE:
-                setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
+                if(isAutonomous) {
+                    setDriveSignal(follower.update(currentPose));
+                }
+                else {
+                    setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
+                }
                 break;
             case TURN: {
                 double t = clock.seconds() - turnStart;
@@ -247,9 +255,10 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
                 fieldOverlay.setStroke("#3F51B5");
                 fieldOverlay.fillCircle(currentPose.getX(), currentPose.getY(), 3);
 
-                if (!follower.isFollowing()) {
+//                if (!follower.isFollowing()) {
+                if(follower.getTrajectory().duration() - follower.elapsedTime() < 0) {
                     mode = Mode.IDLE;
-                    setDriveSignal(new DriveSignal());
+//                    setDriveSignal(new DriveSignal());
                 }
 
                 break;

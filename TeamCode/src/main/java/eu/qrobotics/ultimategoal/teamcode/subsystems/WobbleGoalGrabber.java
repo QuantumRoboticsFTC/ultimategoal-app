@@ -1,8 +1,6 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -37,7 +35,7 @@ public class WobbleGoalGrabber implements Subsystem {
         wobbleGoalClawServo = hardwareMap.get(Servo.class, "wobbleGoalClawServo");
 
         wobbleGoalArmMode = WobbleGoalArmMode.INITIAL;
-        wobbleGoalClawMode = WobbleGoalClawMode.CLOSE;
+        wobbleGoalClawMode = WobbleGoalClawMode.OPEN;
     }
 
     public static boolean IS_DISABLED = false;

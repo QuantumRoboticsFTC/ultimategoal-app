@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 2.6, 2.6);
-    public static PIDCoefficients LATERAL_PID = new PIDCoefficients(0.3, 2.6, 2.6);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5.7, 0, 1.7);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 2.6, 2.6);
+    public static PIDCoefficients LATERAL_PID = new PIDCoefficients(20, 2.6, 3);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1.7);
 
     public static double LATERAL_MULTIPLIER = 1;
     public static double WHEEL_BASE = 13.25;
@@ -25,12 +25,15 @@ public class DriveConstants {
     public static double MAX_ANG_ACCEL = Math.toRadians(270);
 
     public static TrajectoryVelocityConstraint AUTOAIM_VEL_CONSTRAINT = new MecanumVelocityConstraint(80, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
-    public static TrajectoryAccelerationConstraint AUTOAIM_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(100);
+    public static TrajectoryAccelerationConstraint AUTOAIM_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(200);
 
     public static TrajectoryVelocityConstraint BASE_VEL_CONSTRAINT = new MecanumVelocityConstraint(40, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
-    public static TrajectoryAccelerationConstraint BASE_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(60);
+    public static TrajectoryAccelerationConstraint BASE_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(80);
 
-    public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(1, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryVelocityConstraint FAST_VEL_CONSTRAINT = new MecanumVelocityConstraint(55, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint FAST_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(120);
+
+    public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(2, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint SLOW_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(20);
 
 

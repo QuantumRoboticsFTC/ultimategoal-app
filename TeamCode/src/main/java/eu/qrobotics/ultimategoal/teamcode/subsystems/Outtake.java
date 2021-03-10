@@ -25,7 +25,7 @@ public class Outtake implements Subsystem {
 
     public static Vector2d TOWER_GOAL_POS = new Vector2d(72, -36);
     public static Vector2d POWERSHOT_POS = new Vector2d(72, -10);
-    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(95, 0, 25, 15);
+    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(95, 0, 40, 15);
 
     private static class Coefficients {
         public double kA, kB, kC, kD;
@@ -34,7 +34,7 @@ public class Outtake implements Subsystem {
     }
 
     public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1880.281);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1680.281);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1630.281);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;

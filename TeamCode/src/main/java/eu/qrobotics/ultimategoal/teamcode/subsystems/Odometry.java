@@ -43,9 +43,9 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
                 new Pose2d(-7.592, -1.496, Math.toRadians(90)) // front
         ));
 
-        frontEncoder = hardwareMap.get(DcMotor.class, "rightFront");
-        leftEncoder = hardwareMap.get(DcMotor.class, "leftRear");
-        rightEncoder = hardwareMap.get(DcMotor.class, "leftFront");
+        frontEncoder = hardwareMap.get(DcMotor.class, "leftRear");
+        leftEncoder = hardwareMap.get(DcMotor.class, "leftFront");
+        rightEncoder = hardwareMap.get(DcMotor.class, "rightFront");
 
         leftEncoderBase = leftEncoder.getCurrentPosition();
         rightEncoderBase = rightEncoder.getCurrentPosition();
@@ -61,8 +61,8 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     public List<Double> getWheelPositions() {
         return Arrays.asList(
                 encoderTicksToInches(-(leftEncoder.getCurrentPosition() - leftEncoderBase)),
-                encoderTicksToInches(-(rightEncoder.getCurrentPosition() - rightEncoderBase)),
-                encoderTicksToInches(-(frontEncoder.getCurrentPosition() - frontEncoderBase))
+                encoderTicksToInches((rightEncoder.getCurrentPosition() - rightEncoderBase)),
+                encoderTicksToInches((frontEncoder.getCurrentPosition() - frontEncoderBase))
         );
     }
 }
