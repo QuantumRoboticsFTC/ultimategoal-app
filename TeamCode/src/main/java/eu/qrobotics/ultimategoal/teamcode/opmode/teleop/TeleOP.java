@@ -81,10 +81,10 @@ public class TeleOP extends OpMode {
                 robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate()));
             }
             if(stickyGamepad1.a) {
-                robot.drive.turn(Math.toRadians(10));
+                robot.drive.turn(Math.toRadians(13));
             }
             if(stickyGamepad1.b) {
-                robot.drive.turn(Math.toRadians(-10));
+                robot.drive.turn(Math.toRadians(-13));
             }
         }
         else {
@@ -113,6 +113,14 @@ public class TeleOP extends OpMode {
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.DOWN;
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.OPEN;
         }
+        if (stickyGamepad1.dpad_left) {
+            if(robot.wobbleGoalGrabber.wobbleGoalArmMode == WobbleGoalArmMode.UP) {
+                robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.INITIAL;
+            }
+            else if(robot.wobbleGoalGrabber.wobbleGoalArmMode == WobbleGoalArmMode.INITIAL) {
+                robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
+            }
+        }
 
         if (wobbleGrabTimer.seconds() > 0.5 && wobbleGrabTimer.seconds() < 0.6) {
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
@@ -124,9 +132,13 @@ public class TeleOP extends OpMode {
 
         if (gamepad2.left_stick_y < -0.1)
             robot.intake.intakeMode = IntakeMode.IN;
-        else if (gamepad2.left_stick_y > 0.1)
-            robot.intake.intakeMode = IntakeMode.OUT_SLOW;
-        else if (robot.intake.intakeMode == IntakeMode.OUT_SLOW)
+        else if (gamepad2.left_stick_y > 0.1) {
+            if(gamepad2.left_stick_button)
+                robot.intake.intakeMode = IntakeMode.OUT;
+            else
+                robot.intake.intakeMode = IntakeMode.OUT_SLOW;
+        }
+        else if (robot.intake.intakeMode == IntakeMode.OUT_SLOW || robot.intake.intakeMode == IntakeMode.OUT)
             robot.intake.intakeMode = IntakeMode.IDLE;
 
         if (stickyGamepad2.a) {
@@ -160,6 +172,7 @@ public class TeleOP extends OpMode {
         telemetry.addData("Mean250 robot time", robot.top10.getMean() * 1000);
         telemetry.addData("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
         telemetry.addData("Buffer rings", robot.buffer.getRingCount());
+        telemetry.addData("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation());
         telemetry.addData("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
         telemetry.addData("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
         telemetry.addData("Outtake target", robot.outtake.outtakeTarget);
