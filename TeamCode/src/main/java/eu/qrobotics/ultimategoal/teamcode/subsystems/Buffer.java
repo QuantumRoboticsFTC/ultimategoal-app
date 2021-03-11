@@ -88,6 +88,8 @@ public class Buffer implements Subsystem {
     public static boolean IS_DISABLED = false;
     public double lastDistance = 0;
 
+    public int pushAttempts = 0;
+
     @Override
     public void update() {
         if(IS_DISABLED) return;
@@ -118,7 +120,7 @@ public class Buffer implements Subsystem {
                 else if(getRingCount() == 1) {
                     bufferServo.setPosition(BUFFER_RING2_POSITION);
                 }
-                else if(getRingCount() == 2){
+                else {
                     bufferServo.setPosition(BUFFER_RING3_POSITION);
                 }
                 break;
@@ -161,6 +163,8 @@ public class Buffer implements Subsystem {
                 if (bufferPushTime.seconds() > 0.25 + 0.25) {
                     bufferPusherState = BufferPusherState.IDLE;
 
+                    pushAttempts++;
+
                     if (bufferPusherMode == BufferPusherMode.PUSH_SINGLE) {
                         bufferPusherMode = BufferPusherMode.IDLE;
                     }
@@ -178,16 +182,16 @@ public class Buffer implements Subsystem {
 
     public int getRingCount() {
         double mean = ringSensorValues.getMean();
-        double stdev = ringSensorValues.getStandardDeviation();
+        double stdev = ringSensorValues.getStandardDeviation() / 2;
 
         double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 135) {
+        if(distance > 127) {
             return 0;
         }
-        if(distance > 126) {
+        if(distance > 120) {
             return 1;
         }
-        if(distance > 119) {
+        if(distance > 113) {
             return 2;
         }
         return 3;

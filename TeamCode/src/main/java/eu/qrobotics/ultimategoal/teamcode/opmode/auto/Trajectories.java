@@ -108,7 +108,7 @@ public class Trajectories {
         */
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(34, -24, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(34, -20, Math.toRadians(-90)))
                 .build());
 
         // go to second wobble
@@ -191,7 +191,7 @@ public class Trajectories {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), AUTOAIM_VEL_CONSTRAINT, AUTOAIM_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(16, -46))
+                .lineToConstantHeading(new Vector2d(20, -40))
                 .build());
 
         return trajectories;

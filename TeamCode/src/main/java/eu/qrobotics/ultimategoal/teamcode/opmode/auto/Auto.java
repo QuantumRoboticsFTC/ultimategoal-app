@@ -196,6 +196,10 @@ public class Auto extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesB.get(3));
 
             robot.sleep(1);
+            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
+            robot.sleep(1);
+            robot.intake.intakeMode = Intake.IntakeMode.IN;
+            robot.sleep(2);
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.sleep(0.5);
@@ -286,19 +290,17 @@ public class Auto extends LinearOpMode {
             robot.sleep(0.5);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
+            robot.sleep(0.3);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
-            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE) {
+            robot.buffer.pushAttempts = 0;
+            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
                 robot.sleep(0.05);
                 if(isStopRequested()) {
                     robot.stop();
                     return;
                 }
             }
+            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.IDLE;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
@@ -307,19 +309,17 @@ public class Auto extends LinearOpMode {
             robot.sleep(1);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
+            robot.sleep(0.3);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
-            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE) {
+            robot.buffer.pushAttempts = 0;
+            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
                 robot.sleep(0.05);
                 if(isStopRequested()) {
                     robot.stop();
                     return;
                 }
             }
+            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.IDLE;
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(6));
