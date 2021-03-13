@@ -52,11 +52,13 @@ public class Buffer implements Subsystem {
     private ColorRangeSensor bufferRingSensor;
 
     private Robot robot;
+    private boolean isAutonomous;
 
     public MovingStatistics ringSensorValues;
 
-    public Buffer(HardwareMap hardwareMap, Robot robot) {
+    public Buffer(HardwareMap hardwareMap, Robot robot, boolean isAutonomous) {
         this.robot = robot;
+        this.isAutonomous = isAutonomous;
 
         bufferServo = hardwareMap.get(Servo.class, "bufferServo");
         bufferPusherServo = hardwareMap.get(Servo.class, "bufferPusherServo");
@@ -133,7 +135,7 @@ public class Buffer implements Subsystem {
             bufferPusherMode = BufferPusherMode.IDLE;
             bufferPusherState = BufferPusherState.IDLE;
         }
-        if (getRingCount() == 0) {
+        if (getRingCount() == 0 && !(isAutonomous && bufferPusherMode == BufferPusherMode.PUSH_SINGLE)) {
             bufferPusherMode = BufferPusherMode.IDLE;
         }
 

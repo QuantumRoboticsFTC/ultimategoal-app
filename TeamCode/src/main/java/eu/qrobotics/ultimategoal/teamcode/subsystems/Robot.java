@@ -105,7 +105,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         }
 
         try {
-            buffer = new Buffer(opMode.hardwareMap, this);
+            buffer = new Buffer(opMode.hardwareMap, this, isAutonomous);
             subsystems.add(buffer);
         } catch (Exception e) {
             Log.w(TAG, "skipping Buffer");

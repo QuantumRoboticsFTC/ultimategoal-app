@@ -6,6 +6,9 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
 }
 
 dependencies {
@@ -20,7 +23,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.roadrunner:core:0.5.3'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.0'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
     implementation 'org.openftc:easyopencv:1.4.4'
 }
 

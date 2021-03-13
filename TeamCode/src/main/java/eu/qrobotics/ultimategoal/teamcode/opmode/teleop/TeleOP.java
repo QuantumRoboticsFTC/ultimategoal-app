@@ -1,10 +1,13 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferMode;
@@ -15,6 +18,7 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake.OuttakeMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalArmMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalClawMode;
+import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.StickyGamepad;
 
 @TeleOp
@@ -32,15 +36,18 @@ public class TeleOP extends OpMode {
 
     MultipleTelemetry telemetry;
 
+    private VoltageSensor batteryVoltageSensor;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
-
         robot = new Robot(this, false);
 //        robot.drive.fieldCentric = true;
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
         driveMode = DriveMode.NORMAL;
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         telemetry.log().add("Ready!");
     }
@@ -73,18 +80,25 @@ public class TeleOP extends OpMode {
             }
             if (stickyGamepad1.x) {
                 robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
+                /*double targetAngle = Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
+                double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
+                if(moveAngle > Math.PI)
+                    moveAngle -= 2 * Math.PI;
+                if(moveAngle < -Math.PI)
+                    moveAngle += 2 * Math.PI;
+                robot.drive.turn(moveAngle);*/
             }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
             if(stickyGamepad1.y) {
-                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate()));
+                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 2));
             }
             if(stickyGamepad1.a) {
-                robot.drive.turn(Math.toRadians(13));
+                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 0));
             }
             if(stickyGamepad1.b) {
-                robot.drive.turn(Math.toRadians(-13));
+                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 1));
             }
         }
         else {
@@ -167,25 +181,36 @@ public class TeleOP extends OpMode {
         }
         // endregion
 
-        telemetry.addData("Mean250 sensor time", robot.buffer.avgSensorTime10.getMean() * 1000);
-        telemetry.addData("Dev250 sensor time", robot.buffer.avgSensorTime10.getStandardDeviation() * 1000);
-        telemetry.addData("Mean250 robot time", robot.top10.getMean() * 1000);
-        telemetry.addData("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
-        telemetry.addData("Buffer rings", robot.buffer.getRingCount());
-        telemetry.addData("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation());
-        telemetry.addData("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
-        telemetry.addData("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
-        telemetry.addData("Outtake target", robot.outtake.outtakeTarget);
-        telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
-        telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
-        telemetry.addData("Outtake ready?", robot.outtake.isReady());
-        telemetry.addData("Buffer pusher state", robot.buffer.getBufferPusherState());
-        telemetry.addData("Buffer pusher mode", robot.buffer.bufferPusherMode);
-        telemetry.addData("Target robot angle", Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle());
-        telemetry.addData("Current robot angle", robot.drive.getPoseEstimate().getHeading());
-        telemetry.addData("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
-        telemetry.addData("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
-        telemetry.update();
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
+
+        fieldOverlay.setStroke("#3F51B5");
+        DashboardUtil.drawRobot(fieldOverlay, robot.drive.getPoseEstimate());
+
+        packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
+        packet.put("Mean250 sensor time", robot.buffer.avgSensorTime10.getMean() * 1000);
+        packet.put("Dev250 sensor time", robot.buffer.avgSensorTime10.getStandardDeviation() * 1000);
+        packet.put("Mean250 robot time", robot.top10.getMean() * 1000);
+        packet.put("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
+        packet.put("Buffer rings", robot.buffer.getRingCount());
+        packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
+        packet.put("1 ring", 127);
+        packet.put("2 rings", 123);
+        packet.put("3 rings", 113);
+        packet.put("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
+        packet.put("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
+        packet.put("Outtake target", robot.outtake.outtakeTarget);
+        packet.put("Outtake target RPM", robot.outtake.getTargetRPM());
+        packet.put("Outtake current RPM", robot.outtake.getCurrentRPM());
+        packet.put("Outtake ready?", robot.outtake.isReady());
+        packet.put("Buffer pusher state", robot.buffer.getBufferPusherState());
+        packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
+        packet.put("Target robot angle", Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle());
+        packet.put("Current robot angle", robot.drive.getPoseEstimate().getHeading());
+        packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
+        packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//        telemetry.update();
     }
 
     @Override

@@ -3,7 +3,9 @@ package eu.qrobotics.ultimategoal.teamcode.opmode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,6 +23,11 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.PARK_ACCEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.PARK_VEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_ACCEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_VEL_CONSTRAINT;
+
 @Config
 @Autonomous
 public class Auto extends LinearOpMode {
@@ -34,11 +41,11 @@ public class Auto extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    private MultipleTelemetry telemetry;
+//    private MultipleTelemetry telemetry;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot robot = new Robot(this, true);
         robot.drive.setPoseEstimate(Trajectories.START_POSE);
         List<Trajectory> trajectoriesA = Trajectories.getTrajectoriesA();
@@ -63,7 +70,7 @@ public class Auto extends LinearOpMode {
 
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(3, 16.0/9.0);
         }
 
         while(!isStarted()) {
@@ -95,6 +102,7 @@ public class Auto extends LinearOpMode {
             robot.stop();
             return;
         }
+        resetStartTime();
 
         robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
 
@@ -133,6 +141,7 @@ public class Auto extends LinearOpMode {
                 }
             }
             */
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
 
             robot.drive.followTrajectorySync(trajectoriesA.get(3));
 
@@ -235,23 +244,27 @@ public class Auto extends LinearOpMode {
             robot.sleep(0.2);
 
             robot.drive.followTrajectorySync(trajectoriesB.get(7));
+
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
+
+            robot.sleep(0.5);
         }
         else if(ringStack == RingDetector.Stack.FOUR) {
             // C
-            robot.drive.followTrajectorySync(trajectoriesA.get(0));
+            robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
+            robot.sleep(0.9);
 
-            robot.drive.followTrajectorySync(trajectoriesA.get(1));
-
-            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
-
-            robot.drive.followTrajectorySync(trajectoriesA.get(2));
+            robot.drive.followTrajectorySync(trajectoriesC.get(1));
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
+            robot.sleep(0.9);
+
+            robot.drive.followTrajectorySync(trajectoriesC.get(2));
+
+            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
+            robot.sleep(0.9);
             /*
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
@@ -269,6 +282,7 @@ public class Auto extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            robot.intake.intakeMode = Intake.IntakeMode.OUT;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
 
@@ -290,7 +304,11 @@ public class Auto extends LinearOpMode {
             robot.sleep(0.5);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.3);
+            robot.sleep(0.1);
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.sleep(0.1);
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            robot.sleep(0.1);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -309,7 +327,11 @@ public class Auto extends LinearOpMode {
             robot.sleep(1);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.3);
+            robot.sleep(0.1);
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.sleep(0.1);
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            robot.sleep(0.1);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -343,7 +365,20 @@ public class Auto extends LinearOpMode {
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(9));
+            robot.drive.followTrajectory(trajectoriesC.get(9));
+            while(robot.drive.isBusy()) {
+                if(getRuntime() > 29.8) {
+                    robot.drive.followTrajectory(new TrajectoryBuilder(robot.drive.getPoseEstimate(), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
+                            .forward(0.1)
+                            .build());
+                    break;
+                }
+            }
+            if(getRuntime() < 29.8) {
+                robot.drive.followTrajectorySync(new TrajectoryBuilder(robot.drive.getPoseEstimate(), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
+                        .lineToConstantHeading(new Vector2d(16, -40))
+                        .build());
+            }
         }
 
         robot.stop();

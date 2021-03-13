@@ -16,6 +16,10 @@ import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.BASE_
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.BASE_VEL_CONSTRAINT;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.FAST_ACCEL_CONSTRAINT;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.FAST_VEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.PARK_ACCEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.PARK_VEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.POWERSHOT_ACCEL_CONSTRAINT;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.POWERSHOT_VEL_CONSTRAINT;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_ACCEL_CONSTRAINT;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_VEL_CONSTRAINT;
 
@@ -40,14 +44,14 @@ public class Trajectories {
         List<Trajectory> trajectories = new ArrayList<>();
 
         // powershots
-        trajectories.add(makeTrajectoryBuilder(trajectories, 0)
-                .splineTo(new Vector2d(-20, -25), 0)
+        trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .splineTo(new Vector2d(-20, -27), 0)
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -18))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26.5, Math.toRadians(6)))
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -8))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26, Math.toRadians(10)))
                 .build());
         /*
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
@@ -62,7 +66,7 @@ public class Trajectories {
 
         // go to second wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-36, -42, Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-37, -42, Math.toRadians(180)), Math.toRadians(180))
                 .build());
 
         // place second wobble
@@ -71,7 +75,7 @@ public class Trajectories {
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
                 .splineToSplineHeading(new Pose2d(12, -30, Math.toRadians(-90)), Math.toRadians(90))
                 .build());
 
@@ -82,14 +86,14 @@ public class Trajectories {
         List<Trajectory> trajectories = new ArrayList<>();
 
         // powershots
-        trajectories.add(makeTrajectoryBuilder(trajectories, 0)
-                .splineTo(new Vector2d(-20, -25), 0)
+        trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .splineTo(new Vector2d(-20, -27), 0)
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -18))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26.5, Math.toRadians(6)))
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -8))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26, Math.toRadians(10)))
                 .build());
         /*
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
@@ -113,7 +117,7 @@ public class Trajectories {
 
         // go to second wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-36, -42.5, Math.toRadians(180)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-37, -42.5, Math.toRadians(180)), Math.toRadians(180))
                 .build());
 
         // place second wobble
@@ -122,7 +126,7 @@ public class Trajectories {
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
                 .lineToConstantHeading(new Vector2d(12, -24))
                 .build());
 
@@ -133,14 +137,14 @@ public class Trajectories {
         List<Trajectory> trajectories = new ArrayList<>();
 
         // powershots
-        trajectories.add(makeTrajectoryBuilder(trajectories, 0)
-                .splineTo(new Vector2d(-20, -25), 0)
+        trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .splineTo(new Vector2d(-20, -27), 0)
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -18))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26.5, Math.toRadians(6)))
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .lineToConstantHeading(new Vector2d(-20, -8))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+                .lineToSplineHeading(new Pose2d(-20, -26, Math.toRadians(10)))
                 .build());
         /*
         // 3 high goal
@@ -171,17 +175,18 @@ public class Trajectories {
 
         // 1 ring high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .lineToSplineHeading(new Pose2d(0, -43, Math.toRadians(5)))
+                .lineToSplineHeading(new Pose2d(0, -43, Math.toRadians(0)))
                 .build());
 
         // place first wobble
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(62, -48, Math.toRadians(-90)))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
+                .lineToLinearHeading(new Pose2d(61, -48, Math.toRadians(-90)))
                 .build());
 
         // go to second wobble
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-36, -43, Math.toRadians(180)), Math.toRadians(180))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
+                .splineToSplineHeading(new Pose2d(-35, -41.5, Math.toRadians(180)), Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-38, -41.5), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
                 .build());
 
         // place second wobble
@@ -190,8 +195,8 @@ public class Trajectories {
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), AUTOAIM_VEL_CONSTRAINT, AUTOAIM_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(20, -40))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
+                .lineToConstantHeading(new Vector2d(16, -40))
                 .build());
 
         return trajectories;
