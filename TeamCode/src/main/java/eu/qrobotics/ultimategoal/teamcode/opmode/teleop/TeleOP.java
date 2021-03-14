@@ -15,6 +15,7 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferPusherMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake.IntakeMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake.OuttakeMode;
+import eu.qrobotics.ultimategoal.teamcode.subsystems.RingStopper;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalArmMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalClawMode;
@@ -178,6 +179,14 @@ public class TeleOP extends OpMode {
         }
         if(stickyGamepad2.right_bumper) {
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+        }
+        if(robot.buffer.getRingCount() < 3 && robot.ringStopper.STARTED) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
+        } else if(robot.ringStopper.STARTED)
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+        if(gamepad2.dpad_up) {
+            robot.ringStopper.STARTED = true;
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
         }
         // endregion
 
