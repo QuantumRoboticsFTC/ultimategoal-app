@@ -9,14 +9,17 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.opencv.core.Point;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
+import eu.qrobotics.ultimategoal.teamcode.opmode.auto.cv.RingDetector;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
@@ -41,11 +44,14 @@ public class Auto extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-//    private MultipleTelemetry telemetry;
+    public static Point TOP_LEFT = new Point(750, 250);
+    public static Point BOTTOM_RIGHT = new Point(1050, 550);
+
+    private MultipleTelemetry telemetry;
 
     @Override
     public void runOpMode() throws InterruptedException {
-//        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot robot = new Robot(this, true);
         robot.drive.setPoseEstimate(Trajectories.START_POSE);
         List<Trajectory> trajectoriesA = Trajectories.getTrajectoriesA();
@@ -56,47 +62,28 @@ public class Auto extends LinearOpMode {
         telemetry.addLine("Driver 1, press A to close WG Grabber");
         telemetry.update();
 
-//        RingDetector ringDetector = new RingDetector(hardwareMap, "Webcam 1");
-//        ringDetector.init();
-//        ringDetector.setBottomRectangle(0.25, 0.6);
-//        ringDetector.setTopRectangle(0.35, 0.6);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvCamera webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.openCameraDevice();
+        webcam.showFpsMeterOnViewport(true);
+        RingDetector ringDetector = new RingDetector(webcam, TOP_LEFT, BOTTOM_RIGHT);
+
+        webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+        FtcDashboard.getInstance().startCameraStream(webcam, 30);
 
         RingDetector.Stack ringStack = RingDetector.Stack.FOUR;
-
-
-        initVuforia();
-        initTfod();
-        FtcDashboard.getInstance().startCameraStream(tfod, 0);
-
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(3, 16.0/9.0);
-        }
 
         while(!isStarted()) {
             if(gamepad1.a) {
                 robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
             }
 
-            if (tfod != null) {
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    if (updatedRecognitions.size() == 0) {
-                        ringStack = RingDetector.Stack.ZERO;
-                    } else {
-                        if (updatedRecognitions.get(0).getLabel().equals("Single")) {
-                            ringStack = RingDetector.Stack.ONE;
-                        } else {
-                            ringStack = RingDetector.Stack.FOUR;
-                        }
-                    }
-                }
-            }
-//            ringStack = ringDetector.getStack();
+            ringStack = ringDetector.getStack();
+            telemetry.addData("Count", ringDetector.getCount() );
             telemetry.addData("Rings", ringStack);
             telemetry.update();
         }
-//        ringDetector.close();
+        webcam.stopStreaming();
 
         if(isStopRequested()) {
             robot.stop();
@@ -382,37 +369,5 @@ public class Auto extends LinearOpMode {
         }
 
         robot.stop();
-    }
-
-
-
-    /**
-     * Initialize the Vuforia localization engine.
-     */
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.6f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
