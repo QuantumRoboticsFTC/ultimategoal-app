@@ -9,15 +9,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake implements Subsystem {
     public enum IntakeMode {
         IN,
+        IN_SLOW,
         IDLE,
         OUT,
         OUT_SLOW,
     }
 
     public static double INTAKE_IN_SPEED = 1;
+    public static double INTAKE_IN_SLOW_SPEED = 0.3;
     public static double INTAKE_IDLE_SPEED = 0;
     public static double INTAKE_OUT_SPEED = -0.8;
-    public static double INTAKE_OUT_SLOW_SPEED = -0.5;
+    public static double INTAKE_OUT_SLOW_SPEED = -0.4;
 
     public IntakeMode intakeMode;
 
@@ -45,6 +47,9 @@ public class Intake implements Subsystem {
         switch (intakeMode) {
             case IN:
                 intakeMotor.setPower(INTAKE_IN_SPEED);
+                break;
+            case IN_SLOW:
+                intakeMotor.setPower(INTAKE_IN_SLOW_SPEED);
                 break;
             case IDLE:
                 intakeMotor.setPower(INTAKE_IDLE_SPEED);

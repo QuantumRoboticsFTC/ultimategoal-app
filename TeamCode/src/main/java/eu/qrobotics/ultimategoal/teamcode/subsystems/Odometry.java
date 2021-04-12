@@ -32,8 +32,9 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
+    public static Pose2d LEFT_POSE = new Pose2d(-2.2835, 7.7383, 0);
+    public static Pose2d RIGHT_POSE = new Pose2d(-2.2835, -7.7383, 0);
+    public static Pose2d FRONT_POSE = new Pose2d(-7.7917, -2.4409, Math.toRadians(-90));
 
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 1;
@@ -42,9 +43,9 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
 
     public Odometry(HardwareMap hardwareMap) {
         super(Arrays.asList(
-                new Pose2d(-1.811, 7.755, 0), // left
-                new Pose2d(-1.811, -7.755, 0), // right
-                new Pose2d(-7.592, -1.496, Math.toRadians(90)) // front
+                LEFT_POSE, // left
+                RIGHT_POSE, // right
+                FRONT_POSE // front
         ));
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));

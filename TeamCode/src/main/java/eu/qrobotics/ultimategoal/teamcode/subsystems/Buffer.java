@@ -156,13 +156,13 @@ public class Buffer implements Subsystem {
                 break;
             case PUSHING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_PUSH_POSITION);
-                if (bufferPushTime.seconds() > 0.25) {
+                if (bufferPushTime.seconds() > 0.1) {
                     bufferPusherState = BufferPusherState.RETRACTING;
                 }
                 break;
             case RETRACTING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_IDLE_POSITION);
-                if (bufferPushTime.seconds() > 0.25 + 0.25) {
+                if (bufferPushTime.seconds() > 0.1 + 0.1) {
                     bufferPusherState = BufferPusherState.IDLE;
 
                     pushAttempts++;
@@ -187,13 +187,13 @@ public class Buffer implements Subsystem {
         double stdev = ringSensorValues.getStandardDeviation() / 2;
 
         double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 127) {
+        if(distance > 115) {
             return 0;
         }
-        if(distance > 120) {
+        if(distance > 100) {
             return 1;
         }
-        if(distance > 113) {
+        if(distance > 90) {
             return 2;
         }
         return 3;

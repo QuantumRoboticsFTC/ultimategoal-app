@@ -34,7 +34,7 @@ public class Outtake implements Subsystem {
     }
 
     public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1880.281);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1600.281);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1670.281);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;

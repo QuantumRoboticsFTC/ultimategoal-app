@@ -9,13 +9,9 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.opencv.core.Point;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.List;
 
@@ -46,6 +42,8 @@ public class Auto extends LinearOpMode {
 
     public static Point TOP_LEFT = new Point(750, 250);
     public static Point BOTTOM_RIGHT = new Point(1050, 550);
+
+    public static RingDetector.Stack RING_STACK = RingDetector.Stack.FOUR;
 
     private MultipleTelemetry telemetry;
 
@@ -96,6 +94,7 @@ public class Auto extends LinearOpMode {
         robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
         robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
         robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+        robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
 
         if(ringStack == RingDetector.Stack.ZERO) {
             // A
@@ -269,7 +268,7 @@ public class Auto extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
-            robot.intake.intakeMode = Intake.IntakeMode.OUT;
+            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
 
@@ -279,23 +278,20 @@ public class Auto extends LinearOpMode {
 
             while(robot.drive.isBusy()) {
                 if(robot.buffer.getRingCount() >= 2) {
-                    robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+                    robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
+                    robot.drive.cancelTrajectory();
                 }
                 if(robot.buffer.getRingCount() >= 3) {
-                    robot.intake.intakeMode = Intake.IntakeMode.OUT;
+                    robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
                 }
             }
 
-            robot.sleep(1);
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
-            robot.sleep(0.5);
+            robot.sleep(0.2);
+            robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            robot.sleep(0.2);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -309,16 +305,23 @@ public class Auto extends LinearOpMode {
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(5));
+            robot.drive.followTrajectory(trajectoriesC.get(5));
 
-            robot.sleep(1);
-            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+
+            while(robot.drive.isBusy()) {
+                if (robot.buffer.getRingCount() >= 2) {
+                    robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
+                }
+            }
+
+            if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
+                robot.sleep(2);
+            }
+            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
+            robot.sleep(0.3);
+            robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.sleep(0.1);
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(0.1);
+            robot.sleep(0.2);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -330,6 +333,7 @@ public class Auto extends LinearOpMode {
             }
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.IDLE;
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(6));
 
@@ -337,6 +341,7 @@ public class Auto extends LinearOpMode {
             robot.sleep(0.5);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
+            robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(7));
 

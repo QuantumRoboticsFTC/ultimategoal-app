@@ -59,6 +59,7 @@ public class TeleOP extends OpMode {
     }
 
     private ElapsedTime wobbleGrabTimer = new ElapsedTime();
+    private ElapsedTime bufferUpTimer = new ElapsedTime();
 
     @Override
     public void loop() {
@@ -169,6 +170,8 @@ public class TeleOP extends OpMode {
         if(stickyGamepad2.b) {
             robot.buffer.bufferMode = BufferMode.OUTTAKE;
             robot.outtake.outtakeMode = OuttakeMode.ON;
+            robot.intake.intakeMode = IntakeMode.IN_SLOW;
+            bufferUpTimer.reset();
         }
 
         if (stickyGamepad2.x) {
@@ -192,6 +195,10 @@ public class TeleOP extends OpMode {
             robot.ringStopper.STARTED = true;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
         }
+
+        if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
+            robot.intake.intakeMode = IntakeMode.IDLE;
+        }
         // endregion
 
         TelemetryPacket packet = new TelemetryPacket();
@@ -207,9 +214,9 @@ public class TeleOP extends OpMode {
         packet.put("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
         packet.put("Buffer rings", robot.buffer.getRingCount());
         packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
-        packet.put("1 ring", 127);
-        packet.put("2 rings", 123);
-        packet.put("3 rings", 113);
+        packet.put("1 ring", 115);
+        packet.put("2 rings", 100);
+        packet.put("3 rings", 90);
         packet.put("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
         packet.put("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
         packet.put("Outtake target", robot.outtake.outtakeTarget);
