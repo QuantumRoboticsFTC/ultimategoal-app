@@ -80,17 +80,21 @@ public class TeleOP extends OpMode {
                     break;
             }
             if (stickyGamepad1.x) {
-                robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
-                /*double targetAngle = Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
+                //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
+                double targetAngle = Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
                 double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
                 if(moveAngle > Math.PI)
                     moveAngle -= 2 * Math.PI;
                 if(moveAngle < -Math.PI)
                     moveAngle += 2 * Math.PI;
-                robot.drive.turn(moveAngle);*/
+                robot.drive.turn(moveAngle);
             }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
+            }
+            if(gamepad1.left_trigger > 0.25) {
+                Pose2d currPos = robot.drive.getPoseEstimate();
+                robot.drive.setPoseEstimate(new Pose2d(currPos.getX(), 39, 0));
             }
             if(stickyGamepad1.y) {
                 robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 2));

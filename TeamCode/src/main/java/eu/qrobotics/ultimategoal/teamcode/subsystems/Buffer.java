@@ -29,14 +29,14 @@ public class Buffer implements Subsystem {
         RETRACTING,
     }
 
-    public static double BUFFER_DOWN_POSITION = 0.64;
-    public static double BUFFER_RING1_POSITION = 0.61;
-    public static double BUFFER_RING2_POSITION = 0.61;
-    public static double BUFFER_RING3_POSITION = 0.61;
-    public static double BUFFER_OUTTAKE_POSITION = 0.515;
+    public static double BUFFER_DOWN_POSITION = 0.6;
+    public static double BUFFER_RING1_POSITION = 0.58;
+    public static double BUFFER_RING2_POSITION = 0.58;
+    public static double BUFFER_RING3_POSITION = 0.58;
+    public static double BUFFER_OUTTAKE_POSITION = 0.47;
 
     public static double BUFFER_PUSHER_IDLE_POSITION = 0.575;
-    public static double BUFFER_PUSHER_PUSH_POSITION = 0.9;
+    public static double BUFFER_PUSHER_PUSH_POSITION = 0.7 ;
 
     public BufferMode bufferMode;
     public BufferPusherMode bufferPusherMode;
