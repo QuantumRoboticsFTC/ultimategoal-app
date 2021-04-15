@@ -13,9 +13,9 @@ import org.openftc.easyopencv.OpenCvTracker;
 @Config
 public class RingTracker extends OpenCvTracker {
 
-	public static double[] hslThresholdHue = {9, 49};
-	public static double[] hslThresholdSaturation = {138, 255};
-	public static double[] hslThresholdLuminance = {0.0, 180};
+	public static double[] hslThresholdHue = {5, 55};
+	public static double[] hslThresholdSaturation = {130, 255};
+	public static double[] hslThresholdLuminance = {0.0, 255};
 
 	public static boolean SHOW_OUTPUT = false;
 

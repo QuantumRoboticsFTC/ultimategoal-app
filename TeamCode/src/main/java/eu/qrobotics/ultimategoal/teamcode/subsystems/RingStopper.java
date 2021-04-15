@@ -12,9 +12,9 @@ public class RingStopper implements Subsystem {
         INITIAL
     }
 
-    public static double ARM_DOWN_POSITION = 0.37;
-    public static double ARM_UP_POSITION = 0.25;
-    public static double ARM_INITIAL_POSITION = 0;
+    public static double ARM_DOWN_POSITION = 0.87;
+    public static double ARM_UP_POSITION = 0.53;
+    public static double ARM_INITIAL_POSITION = 0.53;
     public boolean STARTED = false;
     public RingStopperMode ringStopperMode;
 

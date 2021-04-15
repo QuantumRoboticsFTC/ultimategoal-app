@@ -33,7 +33,7 @@ public class Outtake implements Subsystem {
         public double apply(double val) { return kA * val * val * val + kB * val * val + kC * val + kD; }
     }
 
-    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1880.281);
+    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1910.281);
     public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1670.281);
 
     public OuttakeMode outtakeMode;
