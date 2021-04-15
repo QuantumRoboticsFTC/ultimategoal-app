@@ -216,30 +216,30 @@ public class Auto extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesB.get(3));
 
-            robot.sleep(1);
-            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
-            robot.sleep(1);
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
+            robot.sleep(0.6);
+            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
+            robot.sleep(0.2);
             robot.intake.intakeMode = Intake.IntakeMode.IN;
-            robot.sleep(2);
-            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+
+            robot.drive.followTrajectorySync(trajectoriesB.get(4));
+
             robot.sleep(0.5);
-            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE) {
+            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
+            robot.sleep(0.5);
+            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
+            robot.buffer.pushAttempts = 0;
+            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
                 robot.sleep(0.05);
                 if(isStopRequested()) {
                     robot.stop();
                     return;
                 }
             }
-            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
-
-            robot.drive.followTrajectorySync(trajectoriesB.get(4));
-
-            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
-            robot.sleep(0.6);
-            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
-            robot.sleep(0.2);
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.intake.intakeMode = Intake.IntakeMode.IN;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(5));
 
@@ -250,16 +250,29 @@ public class Auto extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesB.get(6));
 
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            robot.sleep(0.5);
+            robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
+            robot.buffer.pushAttempts = 0;
+            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
+                robot.sleep(0.05);
+                if(isStopRequested()) {
+                    robot.stop();
+                    return;
+                }
+            }
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
+            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+
+            robot.drive.followTrajectorySync(trajectoriesB.get(7));
+
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
-
-            robot.drive.followTrajectorySync(trajectoriesB.get(7));
-
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
 
-            robot.sleep(0.5);
+            robot.drive.followTrajectorySync(trajectoriesB.get(8));
         }
         else if(ringStack == RingDetector.Stack.FOUR) {
             // C

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0, 4);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0.5, 4);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(13.5, 0.5, 0.1);
 
     public static double LATERAL_MULTIPLIER = 1.7;
