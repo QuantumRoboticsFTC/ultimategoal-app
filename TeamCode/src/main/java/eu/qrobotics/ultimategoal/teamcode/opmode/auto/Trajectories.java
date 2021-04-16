@@ -151,14 +151,14 @@ public class Trajectories {
 
         // powershots
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-3)), 0)
+                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-15)), 0)
                 .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(-20, -21.5, Math.toRadians(2)))
-                .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(-20, -21, Math.toRadians(6)))
-                .build());
+//        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+//                .lineToSplineHeading(new Pose2d(-20, -21.5, Math.toRadians(2)))
+//                .build());
+//        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90), POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
+//                .lineToSplineHeading(new Pose2d(-20, -21, Math.toRadians(6)))
+//                .build());
         /*
         // 3 high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))

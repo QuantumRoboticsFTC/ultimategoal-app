@@ -276,7 +276,7 @@ public class Auto extends LinearOpMode {
         }
         else if(ringStack == RingDetector.Stack.FOUR) {
             // C
-            robot.drive.followTrajectorySync(trajectoriesC.get(0));
+           /* robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
             robot.sleep(0.9);
@@ -289,32 +289,34 @@ public class Auto extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesC.get(2));
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(0.9);
-            /*
+            robot.sleep(0.9);*/
+
+            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
-            robot.sleep(2);
+            robot.sleep(0.3);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
-            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE) {
+            robot.buffer.pushAttempts = 0;
+            while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
                 robot.sleep(0.05);
                 if(isStopRequested()) {
                     robot.stop();
                     return;
                 }
             }
-            */
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(3));
+            robot.drive.followTrajectorySync(trajectoriesC.get(1));
 
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
-            robot.drive.followTrajectory(trajectoriesC.get(4));
+            robot.drive.followTrajectory(trajectoriesC.get(2));
 
             while(robot.drive.isBusy()) {
                 if(robot.buffer.getRingCount() >= 2) {
@@ -345,7 +347,7 @@ public class Auto extends LinearOpMode {
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
-            robot.drive.followTrajectory(trajectoriesC.get(5));
+            robot.drive.followTrajectory(trajectoriesC.get(3));
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
                 robot.sleep(3);
@@ -368,7 +370,7 @@ public class Auto extends LinearOpMode {
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(6));
+            robot.drive.followTrajectorySync(trajectoriesC.get(4));
 
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.5);
@@ -376,21 +378,21 @@ public class Auto extends LinearOpMode {
             robot.sleep(0.2);
             robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(7));
+            robot.drive.followTrajectorySync(trajectoriesC.get(5));
 
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
             robot.sleep(0.3);
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
             robot.sleep(0.3);
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(8));
+            robot.drive.followTrajectorySync(trajectoriesC.get(6));
 
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.5);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
 
-            robot.drive.followTrajectory(trajectoriesC.get(9));
+            robot.drive.followTrajectory(trajectoriesC.get(7));
             while(robot.drive.isBusy()) {
                 if(getRuntime() > 29.8) {
                     robot.drive.followTrajectory(new TrajectoryBuilder(robot.drive.getPoseEstimate(), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
