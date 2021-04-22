@@ -2,7 +2,6 @@ package eu.qrobotics.ultimategoal.teamcode.opmode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -47,11 +46,11 @@ public class Auto extends LinearOpMode {
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
-    private MultipleTelemetry telemetry;
+//    private MultipleTelemetry telemetry;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot robot = new Robot(this, true);
         robot.drive.setPoseEstimate(Trajectories.START_POSE);
         List<Trajectory> trajectoriesA = Trajectories.getTrajectoriesA();
@@ -103,18 +102,21 @@ public class Auto extends LinearOpMode {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
 
+            robot.sleep(0.5);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             robot.drive.followTrajectorySync(trajectoriesA.get(1));
 
+            robot.sleep(0.5);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             robot.drive.followTrajectorySync(trajectoriesA.get(2));
 
+            robot.sleep(0.5);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             /*
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
@@ -295,7 +297,7 @@ public class Auto extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
-            robot.sleep(0.3);
+            robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
@@ -306,6 +308,7 @@ public class Auto extends LinearOpMode {
                     return;
                 }
             }
+            robot.sleep(0.2);
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
@@ -328,8 +331,10 @@ public class Auto extends LinearOpMode {
                 }
             }
 
-            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
-            robot.sleep(0.2);
+            if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
+                robot.intake.intakeMode = Intake.IntakeMode.OUT;
+                robot.sleep(0.4);
+            }
             robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
             robot.sleep(0.2);

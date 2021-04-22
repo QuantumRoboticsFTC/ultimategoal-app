@@ -68,7 +68,7 @@ public class Buffer implements Subsystem {
         bufferPusherMode = BufferPusherMode.IDLE;
         bufferPusherState = BufferPusherState.IDLE;
 
-        ringSensorValues = new MovingStatistics(16);
+        ringSensorValues = new MovingStatistics(isAutonomous ? 16 : 4);
         ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
     }
 

@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer.BufferPusherMode;
+import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake.IntakeMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake.OuttakeMode;
@@ -44,6 +45,7 @@ public class TeleOP extends OpMode {
         telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new Robot(this, false);
 //        robot.drive.fieldCentric = true;
+        robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
         driveMode = DriveMode.NORMAL;
@@ -60,6 +62,8 @@ public class TeleOP extends OpMode {
 
     private ElapsedTime wobbleGrabTimer = new ElapsedTime();
     private ElapsedTime bufferUpTimer = new ElapsedTime();
+    private ElapsedTime buffer2RingsTimer = new ElapsedTime();
+    private ElapsedTime buffer3RingsTimer = new ElapsedTime();
 
     @Override
     public void loop() {
@@ -94,17 +98,14 @@ public class TeleOP extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
             if(gamepad1.left_trigger > 0.25) {
-                Pose2d currPos = robot.drive.getPoseEstimate();
-                robot.drive.setPoseEstimate(new Pose2d(currPos.getX(), 39, 0));
+                robot.drive.setPoseEstimate(new Pose2d(2, -39, 0));
             }
             if(stickyGamepad1.y) {
-                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 2));
-            }
-            if(stickyGamepad1.a) {
-                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 0));
-            }
-            if(stickyGamepad1.b) {
-                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), 1));
+                robot.drive.setPoseEstimate(new Pose2d(2, 15, 0));
+                robot.buffer.bufferMode = BufferMode.OUTTAKE;
+                robot.outtake.outtakeMode = OuttakeMode.ON;
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
+                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), robot));
             }
         }
         else {
@@ -187,19 +188,42 @@ public class TeleOP extends OpMode {
         if(stickyGamepad2.right_bumper) {
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
         }
-        if(robot.buffer.getRingCount() < 3 && robot.ringStopper.STARTED) {
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
-        } else if(robot.ringStopper.STARTED)
+        if(robot.buffer.bufferMode == BufferMode.COLLECT && (0.6 <= buffer2RingsTimer.seconds() && buffer2RingsTimer.seconds() <= 0.7)) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
-        if(gamepad2.dpad_up) {
-            robot.ringStopper.STARTED = true;
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
         }
-
+        if(robot.buffer.bufferMode == BufferMode.OUTTAKE && robot.buffer.bufferPusherMode != BufferPusherMode.IDLE) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
+        }
+        if(gamepad2.dpad_up) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+        }
+        if(gamepad2.dpad_down) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
+        }
+        if(gamepad2.dpad_left) {
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+        }
+        if(gamepad2.dpad_right) {
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+        }
         if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
             robot.intake.intakeMode = IntakeMode.IDLE;
         }
+
+        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
+            robot.intake.intakeMode = IntakeMode.IN_SLOW;
+            robot.buffer.bufferMode = BufferMode.OUTTAKE;
+            robot.outtake.outtakeMode = OuttakeMode.ON;
+        }
+        if((0.8 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.9) && robot.intake.intakeMode == IntakeMode.IN_SLOW) {
+            robot.intake.intakeMode = IntakeMode.IDLE;
+        }
         // endregion
+
+        if(robot.buffer.getRingCount() < 2)
+            buffer2RingsTimer.reset();
+        if(robot.buffer.getRingCount() < 3)
+            buffer3RingsTimer.reset();
 
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -214,7 +238,7 @@ public class TeleOP extends OpMode {
         packet.put("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
         packet.put("Buffer rings", robot.buffer.getRingCount());
         packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
-        packet.put("1 ring", 115);
+        packet.put("1 ring", 110);
         packet.put("2 rings", 100);
         packet.put("3 rings", 90);
         packet.put("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
@@ -229,7 +253,7 @@ public class TeleOP extends OpMode {
         packet.put("Current robot angle", robot.drive.getPoseEstimate().getHeading());
         packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
         packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
 //        telemetry.update();
     }
 

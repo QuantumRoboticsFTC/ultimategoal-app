@@ -10,8 +10,13 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0.5, 4);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(13.5, 0.5, 0.1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(13, 4.5, 4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 5, 2);
+
+//    public static PIDCoefficients TRANSLATIONAL_PID_TELEOP = new PIDCoefficients(15, 0.5, 2);
+//    public static PIDCoefficients HEADING_PID_TELEOP = new PIDCoefficients(15, 2, 0.5);
+    public static PIDCoefficients TRANSLATIONAL_PID_TELEOP = new PIDCoefficients(8, 4, 3.5);
+    public static PIDCoefficients HEADING_PID_TELEOP = new PIDCoefficients(7, 2, 3);
 
     public static double LATERAL_MULTIPLIER = 1.7;
     public static double WHEEL_BASE = 13.25;
@@ -34,7 +39,7 @@ public class DriveConstants {
     public static TrajectoryVelocityConstraint FAST_VEL_CONSTRAINT = new MecanumVelocityConstraint(60,TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint FAST_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(90);
 
-    public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(1, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(2, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint SLOW_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(20);
 
     public static TrajectoryVelocityConstraint PARK_VEL_CONSTRAINT = new MecanumVelocityConstraint(20, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
@@ -42,6 +47,9 @@ public class DriveConstants {
 
     public static TrajectoryVelocityConstraint POWERSHOT_VEL_CONSTRAINT = new MecanumVelocityConstraint(45, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint POWERSHOT_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(60);
+
+    public static TrajectoryVelocityConstraint AUTOAIM_POWERSHOT_VEL_CONSTRAINT = new MecanumVelocityConstraint(10, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint AUTOAIM_POWERSHOT_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(20);
 
 
     public static final double TICKS_PER_REV = 383.6;

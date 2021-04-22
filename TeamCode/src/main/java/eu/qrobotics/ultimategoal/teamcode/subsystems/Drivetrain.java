@@ -35,6 +35,7 @@ import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.MecanumUtil;
 
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.HEADING_PID;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.HEADING_PID_TELEOP;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.LATERAL_MULTIPLIER;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_ACCEL;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MAX_ANG_VEL;
@@ -42,6 +43,7 @@ import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.MOTOR
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.RUN_USING_ENCODER;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRACK_WIDTH;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRANSLATIONAL_PID;
+import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.TRANSLATIONAL_PID_TELEOP;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.encoderTicksToInches;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kA;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.kStatic;
@@ -103,8 +105,14 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.25, 0.25, Math.toRadians(0.0)), 1.5);
+        if(isAutonomous) {
+            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                    new Pose2d(0.25, 0.25, Math.toRadians(0.0)), 1.5);
+        }
+        else {
+            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_TELEOP, TRANSLATIONAL_PID_TELEOP, HEADING_PID_TELEOP,
+                    new Pose2d(0.25, 0.25, Math.toRadians(0.0)), 1.5);
+        }
         motorPowers = new double[]{0.0, 0.0, 0.0, 0.0};
 
         poseHistory = new LinkedList<>();
