@@ -1,6 +1,7 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
 import eu.qrobotics.ultimategoal.teamcode.util.StickyGamepad;
 
 @TeleOp(group = "Test")
+@Disabled
 public class OuttakeTest extends OpMode {
     private Robot robot;
     private StickyGamepad stickyGamepad1;

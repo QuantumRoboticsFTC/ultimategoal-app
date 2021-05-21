@@ -24,7 +24,7 @@ import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.StickyGamepad;
 
 @TeleOp
-public class TeleOP extends OpMode {
+public class TeleOPBlue extends OpMode {
     enum DriveMode {
         NORMAL,
         SLOW,
@@ -42,6 +42,7 @@ public class TeleOP extends OpMode {
 
     @Override
     public void init() {
+        Outtake.RED_ALLIANCE = false;
         telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new Robot(this, false);
 //        robot.drive.fieldCentric = true;
@@ -86,7 +87,7 @@ public class TeleOP extends OpMode {
             }
             if (stickyGamepad1.x) {
                 //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
-                double targetAngle = Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
+                double targetAngle = Outtake.BLUE_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
                 double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
                 if(moveAngle > Math.PI)
                     moveAngle -= 2 * Math.PI;
@@ -95,12 +96,12 @@ public class TeleOP extends OpMode {
                 robot.drive.turn(moveAngle);
             }
             if(gamepad1.right_trigger > 0.25) {
-                robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
+                robot.drive.setPoseEstimate(new Pose2d(-63, 63, 0));
             }
             if(gamepad1.left_trigger > 0.25) {
-                robot.drive.setPoseEstimate(new Pose2d(2, -39, 0));
+                robot.drive.setPoseEstimate(new Pose2d(2, 33, 0));
             }
-            if(stickyGamepad1.y) {
+            if(false && stickyGamepad1.y) {
                 robot.drive.setPoseEstimate(new Pose2d(2, 15, 0));
                 robot.buffer.bufferMode = BufferMode.OUTTAKE;
                 robot.outtake.outtakeMode = OuttakeMode.ON;
@@ -249,7 +250,7 @@ public class TeleOP extends OpMode {
         packet.put("Outtake ready?", robot.outtake.isReady());
         packet.put("Buffer pusher state", robot.buffer.getBufferPusherState());
         packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
-        packet.put("Target robot angle", Outtake.TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle());
+        packet.put("Target robot angle", Outtake.RED_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle());
         packet.put("Current robot angle", robot.drive.getPoseEstimate().getHeading());
         packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
         packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);

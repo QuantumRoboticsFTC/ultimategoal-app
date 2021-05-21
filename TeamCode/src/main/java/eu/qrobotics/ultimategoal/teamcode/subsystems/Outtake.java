@@ -23,7 +23,9 @@ public class Outtake implements Subsystem {
     private static double TICKS_PER_REV = 28;
     private static double READY_RPM_THRESHOLD = 100;
 
-    public static Vector2d TOWER_GOAL_POS = new Vector2d(72, -36);
+    public static boolean RED_ALLIANCE = true;
+    public static Vector2d RED_TOWER_GOAL_POS = new Vector2d(72, -36);
+    public static Vector2d BLUE_TOWER_GOAL_POS = new Vector2d(72, 36);
     public static Vector2d POWERSHOT_POS = new Vector2d(72, -10);
     public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(95, 0, 40, 15);
 
@@ -82,7 +84,10 @@ public class Outtake implements Subsystem {
     }
 
     public double getDistance() {
-        return robot.drive.getPoseEstimate().vec().minus(TOWER_GOAL_POS).norm();
+        if (RED_ALLIANCE)
+            return robot.drive.getPoseEstimate().vec().minus(RED_TOWER_GOAL_POS).norm();
+        else
+            return robot.drive.getPoseEstimate().vec().minus(BLUE_TOWER_GOAL_POS).norm();
     }
 
     public double getTargetRPM() {

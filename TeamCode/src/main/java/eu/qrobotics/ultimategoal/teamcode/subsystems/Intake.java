@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Intake implements Subsystem {
@@ -14,6 +15,10 @@ public class Intake implements Subsystem {
         OUT,
         OUT_SLOW,
     }
+    public enum IntakeStopperMode {
+        DOWN,
+        UP,
+    }
 
     public static double INTAKE_IN_SPEED = 1;
     public static double INTAKE_IN_SLOW_SPEED = 0.3;
@@ -21,9 +26,14 @@ public class Intake implements Subsystem {
     public static double INTAKE_OUT_SPEED = -0.8;
     public static double INTAKE_OUT_SLOW_SPEED = -0.4;
 
+    public static double STOPPER_DOWN_POSITION = 0.35;
+    public static double STOPPER_UP_POSITION = 0.6;
+
     public IntakeMode intakeMode;
+    public IntakeStopperMode intakeStopperMode;
 
     private DcMotor intakeMotor;
+    private Servo intakeStopper;
 
     private Robot robot;
 
@@ -31,9 +41,11 @@ public class Intake implements Subsystem {
         this.robot = robot;
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        intakeStopper = hardwareMap.get(Servo.class, "intakeServo");
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeMode = IntakeMode.IDLE;
+        intakeStopperMode = IntakeStopperMode.DOWN;
     }
 
     public static boolean IS_DISABLED = false;
@@ -59,6 +71,14 @@ public class Intake implements Subsystem {
                 break;
             case OUT_SLOW:
                 intakeMotor.setPower(INTAKE_OUT_SLOW_SPEED);
+                break;
+        }
+        switch (intakeStopperMode) {
+            case DOWN:
+                intakeStopper.setPosition(STOPPER_DOWN_POSITION);
+                break;
+            case UP:
+                intakeStopper.setPosition(STOPPER_UP_POSITION);
                 break;
         }
     }

@@ -27,7 +27,7 @@ public class AutoAim {
             targetLocation = OPTIMAL_LAUNCH_AREA.closestPointOnPolygon(robotPose.vec());
         }*/
 
-        double targetAngle = Outtake.TOWER_GOAL_POS.minus(targetLocation).angle() - Math.toRadians(1);
+        double targetAngle = Outtake.RED_TOWER_GOAL_POS.minus(targetLocation).angle() - Math.toRadians(1);
 
         return new TrajectoryBuilder(robotPose, DriveConstants.AUTOAIM_VEL_CONSTRAINT, DriveConstants.AUTOAIM_ACCEL_CONSTRAINT)
                 .lineToSplineHeading(new Pose2d(targetLocation, targetAngle))

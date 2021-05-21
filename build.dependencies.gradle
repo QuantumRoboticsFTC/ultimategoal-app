@@ -9,6 +9,7 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
+    maven { url = "https://maven.0x778.tk" }
 }
 
 dependencies {
@@ -25,5 +26,6 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.3'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
     implementation 'org.openftc:easyopencv:1.4.4'
+    implementation 'com.spartronics4915.lib:ftc265:2.1.8'
 }
 

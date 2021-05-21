@@ -32,9 +32,9 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static Pose2d LEFT_POSE = new Pose2d(-2.2835, 7.7383, 0);
-    public static Pose2d RIGHT_POSE = new Pose2d(-2.2835, -7.7383, 0);
-    public static Pose2d FRONT_POSE = new Pose2d(-7.7917, -2.4409, Math.toRadians(-90));
+    public static Pose2d LEFT_POSE  = new Pose2d(-2.2835,  7.7390, 0);
+    public static Pose2d RIGHT_POSE = new Pose2d(-2.2835, -7.7390, 0);
+    public static Pose2d FRONT_POSE = new Pose2d(-7.1765, -2.8346, Math.toRadians(-90));
 
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 1;

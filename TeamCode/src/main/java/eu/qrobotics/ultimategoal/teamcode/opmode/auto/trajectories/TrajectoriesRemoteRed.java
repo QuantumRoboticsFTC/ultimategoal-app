@@ -1,4 +1,4 @@
-package eu.qrobotics.ultimategoal.teamcode.opmode.auto;
+package eu.qrobotics.ultimategoal.teamcode.opmode.auto.trajectories;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -21,7 +21,7 @@ import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.POWER
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_ACCEL_CONSTRAINT;
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_VEL_CONSTRAINT;
 
-public class Trajectories {
+public class TrajectoriesRemoteRed {
     public static Pose2d START_POSE = new Pose2d(-63, -18, Math.toRadians(0));
 
     private static Pose2d getTrajectorySequenceEndPose(List<Trajectory> trajectories) {
@@ -169,7 +169,7 @@ public class Trajectories {
         // break stack
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-170))
                 .splineToSplineHeading(new Pose2d(-50, -28, Math.toRadians(-3)), Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-32.5, -40), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-36.5, -40), Math.toRadians(0))
                 .build());
         // intake
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
@@ -199,8 +199,8 @@ public class Trajectories {
         // go to second wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
                 .splineToConstantHeading(new Vector2d(42, -48), Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-35, -54, Math.toRadians(0)), Math.toRadians(180))
-                .lineToConstantHeading(new Vector2d(-37, -54), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
+                .splineToSplineHeading(new Pose2d(-35, -56, Math.toRadians(0)), Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-37, -56), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
                 .build());
 
         // place second wobble
