@@ -8,12 +8,15 @@ public class StickyGamepad {
     public boolean dpad_up, dpad_down, dpad_left, dpad_right;
     public boolean a, b, x, y;
     public boolean left_bumper, right_bumper;
-    public boolean left_stick_button, right_stick_button;
+    public boolean left_stick_button, right_stick_button;public boolean right_trigger_button;
+    public boolean left_trigger_button;
 
     private boolean dpad_up_down, dpad_down_down, dpad_left_down, dpad_right_down;
     private boolean a_down, b_down, x_down, y_down;
     private boolean left_bumper_down, right_bumper_down;
     private boolean left_stick_button_down, right_stick_button_down;
+    private boolean right_trigger_button_down;
+    private boolean left_trigger_button_down;
 
     public StickyGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
@@ -162,6 +165,28 @@ public class StickyGamepad {
         } else {
             right_stick_button = false;
             right_stick_button_down = false;
+        }
+        if (gamepad.right_trigger >= 0.2) {
+            if(right_trigger_button_down) {
+                right_trigger_button = false;
+            } else {
+                right_trigger_button_down = true;
+                right_trigger_button = true;
+            }
+        } else {
+            right_trigger_button = false;
+            right_trigger_button_down = false;
+        }
+        if (gamepad.left_trigger >= 0.2) {
+            if(left_trigger_button_down) {
+                left_trigger_button = false;
+            } else {
+                left_trigger_button_down = true;
+                left_trigger_button = true;
+            }
+        } else {
+            left_trigger_button = false;
+            left_trigger_button_down = false;
         }
     }
 }
