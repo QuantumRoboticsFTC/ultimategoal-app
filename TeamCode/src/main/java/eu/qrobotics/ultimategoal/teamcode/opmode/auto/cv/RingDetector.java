@@ -20,7 +20,7 @@ public class RingDetector {
     private Point pt1, pt2;
 
     public static double THRESHOLD_FOUR = 4500000;
-    public static double THRESHOLD_ONE = 1500000;
+    public static double THRESHOLD_ONE = 1000000;
 
     public RingDetector(OpenCvCamera camera, Point pt1, Point pt2) {
         this.camera = camera;
