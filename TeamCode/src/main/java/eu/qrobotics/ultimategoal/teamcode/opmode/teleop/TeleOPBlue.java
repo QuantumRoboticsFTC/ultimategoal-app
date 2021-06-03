@@ -65,7 +65,7 @@ public class TeleOPBlue extends OpMode {
     private ElapsedTime bufferUpTimer = new ElapsedTime();
     private ElapsedTime buffer2RingsTimer = new ElapsedTime();
     private ElapsedTime buffer3RingsTimer = new ElapsedTime();
-
+    private double offsetAngle = 0.0;
     @Override
     public void loop() {
         stickyGamepad1.update();
@@ -87,7 +87,7 @@ public class TeleOPBlue extends OpMode {
             }
             if (stickyGamepad1.x) {
                 //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
-                double targetAngle = Outtake.BLUE_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1);
+                double targetAngle = Outtake.BLUE_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1) + offsetAngle;
                 double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
                 if(moveAngle > Math.PI)
                     moveAngle -= 2 * Math.PI;
@@ -209,6 +209,16 @@ public class TeleOPBlue extends OpMode {
         }
         if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
             robot.intake.intakeMode = IntakeMode.IDLE;
+        }
+        if(stickyGamepad2.right_trigger_button) {
+            offsetAngle += Math.toRadians(1);
+        } else if (stickyGamepad2.left_trigger_button) {
+            offsetAngle -= Math.toRadians(1);
+        }
+        if(stickyGamepad2.dpad_down) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
+        } else if (stickyGamepad2.dpad_up) {
+            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
         }
 
         if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
