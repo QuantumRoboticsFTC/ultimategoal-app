@@ -173,7 +173,7 @@ public class TrajectoriesRemoteRed {
                 .build());
         // intake
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
-                .splineToConstantHeading(new Vector2d(-25, -40), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-25, -40), Math.toRadians(-6))
                 .build());
         /*
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
@@ -188,7 +188,7 @@ public class TrajectoriesRemoteRed {
 
         // 1 ring high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0)/*, SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT*/)
-                .lineToSplineHeading(new Pose2d(-10, -40, Math.toRadians(-3)))
+                .lineToSplineHeading(new Pose2d(-10, -40, Math.toRadians(-6)))
                 .build());
 
         // place first wobble
