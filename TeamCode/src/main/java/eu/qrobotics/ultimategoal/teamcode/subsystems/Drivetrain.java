@@ -102,7 +102,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         mode = Mode.IDLE;
 
         // Initialize autonomous specific stuff
-        turnController = new PIDFController(HEADING_PID);
+        turnController = new PIDFController(isAutonomous ? HEADING_PID : HEADING_PID_TELEOP);
         turnController.setInputBounds(0, 2 * Math.PI);
 
         if(isAutonomous) {
