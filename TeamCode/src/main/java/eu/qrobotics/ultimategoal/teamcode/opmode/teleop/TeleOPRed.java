@@ -85,7 +85,7 @@ public class TeleOPRed extends OpMode {
                     robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
                     break;
             }
-            if (stickyGamepad1.x) {
+            if (gamepad1.x) {
                 //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
                 double targetAngle = Outtake.RED_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1) + offsetAngle;
                 double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
@@ -93,7 +93,8 @@ public class TeleOPRed extends OpMode {
                     moveAngle -= 2 * Math.PI;
                 if(moveAngle < -Math.PI)
                     moveAngle += 2 * Math.PI;
-                robot.drive.turn(moveAngle);
+                if(Math.abs(moveAngle) > Math.toRadians(1))
+                    robot.drive.turn(moveAngle);
             }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
@@ -110,9 +111,6 @@ public class TeleOPRed extends OpMode {
             }
         }
         else {
-            if(stickyGamepad1.x) {
-                robot.drive.cancelTrajectory();
-            }
             if(stickyGamepad1.y) {
                 robot.drive.cancelTrajectory();
             }
@@ -192,7 +190,7 @@ public class TeleOPRed extends OpMode {
         if(robot.buffer.bufferMode == BufferMode.COLLECT && (0.6 <= buffer2RingsTimer.seconds() && buffer2RingsTimer.seconds() <= 0.7)) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
         }
-        if(robot.buffer.bufferMode == BufferMode.OUTTAKE && robot.buffer.bufferPusherMode != BufferPusherMode.IDLE) {
+        if(robot.buffer.bufferMode == BufferMode.OUTTAKE && robot.buffer.bufferPusherMode != BufferPusherMode.IDLE && robot.outtake.outtakeTarget == Outtake.OuttakeTarget.HIGH_GOAL) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
         }
         if(gamepad2.dpad_up) {
@@ -202,10 +200,10 @@ public class TeleOPRed extends OpMode {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
         }
         if(gamepad2.dpad_left) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
         }
         if(gamepad2.dpad_right) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
         }
         if(stickyGamepad2.right_trigger_button) {
             offsetAngle += Math.toRadians(1);
@@ -217,14 +215,14 @@ public class TeleOPRed extends OpMode {
             robot.intake.intakeMode = IntakeMode.IDLE;
         }
 
-        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
-            robot.intake.intakeMode = IntakeMode.IN_SLOW;
-            robot.buffer.bufferMode = BufferMode.OUTTAKE;
-            robot.outtake.outtakeMode = OuttakeMode.ON;
-        }
-        if((0.8 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.9) && robot.intake.intakeMode == IntakeMode.IN_SLOW) {
-            robot.intake.intakeMode = IntakeMode.IDLE;
-        }
+//        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
+//            robot.intake.intakeMode = IntakeMode.IN_SLOW;
+//            robot.buffer.bufferMode = BufferMode.OUTTAKE;
+//            robot.outtake.outtakeMode = OuttakeMode.ON;
+//        }
+//        if((0.8 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.9) && robot.intake.intakeMode == IntakeMode.IN_SLOW) {
+//            robot.intake.intakeMode = IntakeMode.IDLE;
+//        }
         // endregion
 
         if(robot.buffer.getRingCount() < 2)

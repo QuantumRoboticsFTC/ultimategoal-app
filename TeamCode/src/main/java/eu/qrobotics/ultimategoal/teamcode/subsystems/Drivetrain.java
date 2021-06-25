@@ -149,7 +149,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new /*T265*/Odometry(hardwareMap));
+        setLocalizer(new /*T265*/OdometryTwoWheel(hardwareMap));
 
         setPoseEstimate(autonomousEndPose);
     }
@@ -206,7 +206,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         if (fieldCentric) {
             motion = motion.toFieldCentricMotion(getPoseEstimate().getHeading());
         }
-        MecanumUtil.Wheels wh = MecanumUtil.motionToWheels(motion).scaleWheelPower(scale);
+        MecanumUtil.Wheels wh = MecanumUtil.motionToWheelsFullSpeed(motion).scaleWheelPower(scale); // Use full forward speed on 19:1 motors
         motorPowers[0] = wh.frontLeft;
         motorPowers[1] = wh.backLeft;
         motorPowers[2] = wh.backRight;

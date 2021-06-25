@@ -53,7 +53,7 @@ public class TrajectoriesTraditionalBlueRight {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-90), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(0, 15, Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)), Math.toRadians(180))
                 .build());
 
         return trajectories;
@@ -81,7 +81,7 @@ public class TrajectoriesTraditionalBlueRight {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(0, 15))
+                .lineToConstantHeading(new Vector2d(12, 15))
                 .build());
 
         return trajectories;
@@ -118,7 +118,7 @@ public class TrajectoriesTraditionalBlueRight {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(0, 15, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                 .build());
 
         return trajectories;

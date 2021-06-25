@@ -82,8 +82,8 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
 
-        hub1 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 1");
-        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+        hub1 = opMode.hardwareMap.get(LynxModule.class, "Control Hub");
+        hub2 = opMode.hardwareMap.get(LynxModule.class, "Expansion Hub 3");
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         hub2.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

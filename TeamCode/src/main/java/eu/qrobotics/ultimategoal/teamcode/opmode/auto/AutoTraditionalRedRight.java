@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 
 import eu.qrobotics.ultimategoal.teamcode.opmode.auto.cv.RingDetector;
-import eu.qrobotics.ultimategoal.teamcode.opmode.auto.trajectories.TrajectoriesTraditionalBlueLeft;
+import eu.qrobotics.ultimategoal.teamcode.opmode.auto.trajectories.TrajectoriesTraditionalRedRight;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Buffer;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
@@ -29,11 +27,9 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 @Config
 @Autonomous
 @Disabled
-public class AutoTraditionalBlueLeft extends LinearOpMode {
-    //    public static Point TOP_LEFT = new Point(500, 250);
-//    public static Point BOTTOM_RIGHT = new Point(775, 500);
-    public static Point TOP_LEFT = new Point(900, 400);
-    public static Point BOTTOM_RIGHT = new Point(1200, 700); // Camera
+public class AutoTraditionalRedRight extends LinearOpMode {
+    public static Point TOP_LEFT = new Point(500, 250);
+    public static Point BOTTOM_RIGHT = new Point(775, 500);
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -41,13 +37,13 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Outtake.RED_ALLIANCE = false;
+        Outtake.RED_ALLIANCE = true;
 //        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot robot = new Robot(this, true);
-        robot.drive.setPoseEstimate(TrajectoriesTraditionalBlueLeft.START_POSE);
-        List<Trajectory> trajectoriesA = TrajectoriesTraditionalBlueLeft.getTrajectoriesA();
-        List<Trajectory> trajectoriesB = TrajectoriesTraditionalBlueLeft.getTrajectoriesB();
-        List<Trajectory> trajectoriesC = TrajectoriesTraditionalBlueLeft.getTrajectoriesC();
+        robot.drive.setPoseEstimate(TrajectoriesTraditionalRedRight.START_POSE);
+        List<Trajectory> trajectoriesA = TrajectoriesTraditionalRedRight.getTrajectoriesA();
+        List<Trajectory> trajectoriesB = TrajectoriesTraditionalRedRight.getTrajectoriesB();
+        List<Trajectory> trajectoriesC = TrajectoriesTraditionalRedRight.getTrajectoriesC();
         robot.start();
 
         telemetry.addLine("Driver 1, press A to close WG Grabber");
@@ -95,7 +91,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
 
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
@@ -129,7 +125,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // B
             robot.drive.followTrajectorySync(trajectoriesB.get(0));
 
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
@@ -143,7 +139,6 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.sleep(0.2);
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
 
-            robot.sleep(6);
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
 
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
@@ -158,7 +153,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesB.get(2));
 
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(1);
+            robot.sleep(0.2);
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
@@ -177,7 +172,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // C
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
-            robot.sleep(1);
+            robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
@@ -192,8 +187,8 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
-            robot.intake.intakeMode = Intake.IntakeMode.IN;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(1));
 
@@ -213,12 +208,12 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
                 robot.intake.intakeMode = Intake.IntakeMode.OUT;
+                robot.sleep(0.4);
             }
-            robot.sleep(0.4);
             robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(1);
-            robot.intake.intakeMode = Intake.IntakeMode.OUT;
+            robot.sleep(0.2);
+            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -241,7 +236,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.sleep(0.3);
             robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-            robot.sleep(1);
+            robot.sleep(0.2);
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {

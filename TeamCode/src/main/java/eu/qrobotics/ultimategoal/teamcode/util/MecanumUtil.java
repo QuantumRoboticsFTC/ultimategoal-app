@@ -129,6 +129,25 @@ public class MecanumUtil {
     }
 
     /**
+     * Gets the wheel powers corresponding to desired motion.
+     *
+     * @param motion The Mecanum motion vector.
+     * @return The wheels with clamped powers. [-1, 1]
+     */
+    public static Wheels motionToWheelsFullSpeed(Motion motion) {
+        double vD = motion.vD;
+        double thetaD = motion.thetaD;
+        double vTheta = motion.vTheta;
+
+        double frontLeft = vD * Math.sin(thetaD + Math.PI / 2) + vD * Math.cos(thetaD + Math.PI / 2) - vTheta;
+        double frontRight = vD * Math.sin(thetaD + Math.PI / 2) - vD * Math.cos(thetaD + Math.PI / 2) + vTheta;
+        double backLeft = vD * Math.sin(thetaD + Math.PI / 2) - vD * Math.cos(thetaD + Math.PI / 2) - vTheta;
+        double backRight = vD * Math.sin(thetaD + Math.PI / 2) + vD * Math.cos(thetaD + Math.PI / 2) + vTheta;
+        return new Wheels(frontLeft, frontRight,
+                backLeft, backRight);
+    }
+
+    /**
      * Clamps the motor powers while maintaining power ratios.
      *
      * @param powers The motor powers to clamp.

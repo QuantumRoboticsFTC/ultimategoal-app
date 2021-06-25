@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -24,6 +25,7 @@ import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.StickyGamepad;
 
 @TeleOp
+@Disabled
 public class TeleOPBlue extends OpMode {
     enum DriveMode {
         NORMAL,
@@ -85,15 +87,16 @@ public class TeleOPBlue extends OpMode {
                     robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
                     break;
             }
-            if (stickyGamepad1.x) {
+            if (gamepad1.x) {
                 //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
-                double targetAngle = Outtake.BLUE_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1) + offsetAngle;
+                double targetAngle = Outtake.BLUE_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(4) + offsetAngle;
                 double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
-                if(moveAngle > Math.PI)
+                if (moveAngle > Math.PI)
                     moveAngle -= 2 * Math.PI;
-                if(moveAngle < -Math.PI)
+                if (moveAngle < -Math.PI)
                     moveAngle += 2 * Math.PI;
-                robot.drive.turn(moveAngle);
+                if(Math.abs(moveAngle) > Math.toRadians(1))
+                    robot.drive.turn(moveAngle);
             }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, 63, 0));
@@ -110,9 +113,6 @@ public class TeleOPBlue extends OpMode {
             }
         }
         else {
-            if(stickyGamepad1.x) {
-                robot.drive.cancelTrajectory();
-            }
             if(stickyGamepad1.y) {
                 robot.drive.cancelTrajectory();
             }
@@ -202,10 +202,10 @@ public class TeleOPBlue extends OpMode {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
         }
         if(gamepad2.dpad_left) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
         }
         if(gamepad2.dpad_right) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
         }
         if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
             robot.intake.intakeMode = IntakeMode.IDLE;
@@ -221,14 +221,14 @@ public class TeleOPBlue extends OpMode {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
         }
 
-        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
-            robot.intake.intakeMode = IntakeMode.IN_SLOW;
-            robot.buffer.bufferMode = BufferMode.OUTTAKE;
-            robot.outtake.outtakeMode = OuttakeMode.ON;
-        }
-        if((0.8 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.9) && robot.intake.intakeMode == IntakeMode.IN_SLOW) {
-            robot.intake.intakeMode = IntakeMode.IDLE;
-        }
+//        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
+//            robot.intake.intakeMode = IntakeMode.IN_SLOW;
+//            robot.buffer.bufferMode = BufferMode.OUTTAKE;
+//            robot.outtake.outtakeMode = OuttakeMode.ON;
+//        }
+//        if((0.8 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.9) && robot.intake.intakeMode == IntakeMode.IN_SLOW) {
+//            robot.intake.intakeMode = IntakeMode.IDLE;
+//        }
         // endregion
 
         if(robot.buffer.getRingCount() < 2)
