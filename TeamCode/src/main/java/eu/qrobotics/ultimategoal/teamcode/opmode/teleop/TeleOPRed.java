@@ -65,11 +65,27 @@ public class TeleOPRed extends OpMode {
     private ElapsedTime bufferUpTimer = new ElapsedTime();
     private ElapsedTime buffer2RingsTimer = new ElapsedTime();
     private ElapsedTime buffer3RingsTimer = new ElapsedTime();
-    private double offsetAngle = 0.0;
+    private ElapsedTime autoPowershotsTimer = new ElapsedTime();
+
     @Override
     public void loop() {
         stickyGamepad1.update();
         stickyGamepad2.update();
+
+        if(autoPowershotsTimer.seconds() < 5) {
+            if(autoPowershotsTimer.seconds() < 0.5 && !robot.outtake.isReady())
+                autoPowershotsTimer.reset();
+            if(1 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 1.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+            if(1.5 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 1.6)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
+            if(2 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 2.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+            if(2.5 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 2.6)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
+            if(3 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 3.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+        }
 
         //region Driver 1 controls
 
@@ -85,17 +101,6 @@ public class TeleOPRed extends OpMode {
                     robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
                     break;
             }
-            if (gamepad1.x) {
-                //robot.drive.followTrajectory(AutoAim.makeTowerLaunchTrajectory(robot.drive.getPoseEstimate()));
-                double targetAngle = Outtake.RED_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle() - Math.toRadians(1) + offsetAngle;
-                double moveAngle = targetAngle - robot.drive.getPoseEstimate().getHeading();
-                if(moveAngle > Math.PI)
-                    moveAngle -= 2 * Math.PI;
-                if(moveAngle < -Math.PI)
-                    moveAngle += 2 * Math.PI;
-                if(Math.abs(moveAngle) > Math.toRadians(1))
-                    robot.drive.turn(moveAngle);
-            }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
@@ -103,16 +108,10 @@ public class TeleOPRed extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(2, -39, 0));
             }
             if(stickyGamepad1.y) {
-                robot.drive.setPoseEstimate(new Pose2d(2, 15, 0));
+                autoPowershotsTimer.reset();
                 robot.buffer.bufferMode = BufferMode.OUTTAKE;
                 robot.outtake.outtakeMode = OuttakeMode.ON;
-                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
-                robot.drive.followTrajectory(AutoAim.makePowershotLaunchTrajectory(robot.drive.getPoseEstimate(), robot));
-            }
-        }
-        else {
-            if(stickyGamepad1.y) {
-                robot.drive.cancelTrajectory();
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
             }
         }
         if (stickyGamepad1.left_bumper) {
@@ -163,7 +162,7 @@ public class TeleOPRed extends OpMode {
 
         if (stickyGamepad2.a) {
             robot.buffer.bufferMode = BufferMode.COLLECT;
-            robot.outtake.outtakeMode = OuttakeMode.OFF;
+            robot.outtake.outtakeMode = OuttakeMode.IDLE;
             robot.intake.intakeMode = IntakeMode.IN;
         }
 
@@ -182,10 +181,20 @@ public class TeleOPRed extends OpMode {
         }
 
         if(stickyGamepad2.left_bumper) {
-            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
+            if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.HIGH_GOAL)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_1)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_2)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
         }
         if(stickyGamepad2.right_bumper) {
-            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_1)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_2)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_3)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
         }
         if(robot.buffer.bufferMode == BufferMode.COLLECT && (0.6 <= buffer2RingsTimer.seconds() && buffer2RingsTimer.seconds() <= 0.7)) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
@@ -205,11 +214,11 @@ public class TeleOPRed extends OpMode {
         if(gamepad2.dpad_right) {
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
         }
-        if(stickyGamepad2.right_trigger_button) {
-            offsetAngle += Math.toRadians(1);
+        if(gamepad2.left_trigger > 0.25) {
+            robot.outtake.outtakeMode = OuttakeMode.OFF;
         }
-        if(stickyGamepad2.left_trigger_button) {
-            offsetAngle -= Math.toRadians(1);
+        if(gamepad2.right_trigger > 0.25) {
+            robot.outtake.outtakeMode = OuttakeMode.IDLE;
         }
         if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
             robot.intake.intakeMode = IntakeMode.IDLE;
@@ -254,8 +263,6 @@ public class TeleOPRed extends OpMode {
         packet.put("Outtake ready?", robot.outtake.isReady());
         packet.put("Buffer pusher state", robot.buffer.getBufferPusherState());
         packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
-        packet.put("Target robot angle", Outtake.RED_TOWER_GOAL_POS.minus(robot.drive.getPoseEstimate().vec()).angle());
-        packet.put("Current robot angle", robot.drive.getPoseEstimate().getHeading());
         packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
         packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
 //        FtcDashboard.getInstance().sendTelemetryPacket(packet);

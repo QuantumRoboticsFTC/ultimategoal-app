@@ -92,6 +92,8 @@ public class Buffer implements Subsystem {
 
     public int pushAttempts = 0;
 
+    private ElapsedTime bufferUpTimer = new ElapsedTime();
+
     @Override
     public void update() {
         if(IS_DISABLED) return;
@@ -134,6 +136,7 @@ public class Buffer implements Subsystem {
         if (bufferMode != BufferMode.OUTTAKE) {
             bufferPusherMode = BufferPusherMode.IDLE;
             bufferPusherState = BufferPusherState.IDLE;
+            bufferUpTimer.reset();
         }
         if (getRingCount() == 0 && !(isAutonomous && bufferPusherMode == BufferPusherMode.PUSH_SINGLE)) {
             bufferPusherMode = BufferPusherMode.IDLE;
@@ -142,7 +145,7 @@ public class Buffer implements Subsystem {
         switch (bufferPusherMode) {
             case PUSH_SINGLE:
             case PUSH_ALL:
-                if(bufferPusherState == BufferPusherState.IDLE && robot.outtake.isReady()) {
+                if(bufferPusherState == BufferPusherState.IDLE && bufferUpTimer.seconds() > 0.5 && robot.outtake.isReady()) {
                     push();
                 }
                 break;
@@ -156,13 +159,13 @@ public class Buffer implements Subsystem {
                 break;
             case PUSHING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_PUSH_POSITION);
-                if (bufferPushTime.seconds() > (isAutonomous ? 0.25 : 0.15)) {
+                if (bufferPushTime.seconds() > 0.1) {
                     bufferPusherState = BufferPusherState.RETRACTING;
                 }
                 break;
             case RETRACTING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_IDLE_POSITION);
-                if (bufferPushTime.seconds() > (isAutonomous ? 0.25 : 0.15) * 2) {
+                if (bufferPushTime.seconds() > 0.1 * 2) {
                     bufferPusherState = BufferPusherState.IDLE;
 
                     pushAttempts++;
