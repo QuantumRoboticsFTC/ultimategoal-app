@@ -32,9 +32,9 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static Pose2d FRONT_POSE = new Pose2d(1.7173,  1.7097, Math.toRadians(-90));
-    public static Pose2d MIDDLE_POSE = new Pose2d(-4.2544, -2.4547, 0);
-    public static Pose2d REAR_POSE = new Pose2d(-7.1765, -2.8346, Math.toRadians(-90));
+    public static Pose2d FRONT_POSE = new Pose2d(1.6873,  1.7097, Math.toRadians(-90));
+    public static Pose2d MIDDLE_POSE = new Pose2d(-4.2544, -2.7047, 0);
+    public static Pose2d REAR_POSE = new Pose2d(-7.2265, -2.8346, Math.toRadians(-90));
 
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 1;
@@ -63,7 +63,7 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(frontEncoder.getCurrentPosition()) * X_MULTIPLIER,
+                encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER,
                 encoderTicksToInches(middleEncoder.getCurrentPosition()) * X_MULTIPLIER,
                 encoderTicksToInches(rearEncoder.getCurrentPosition()) * Y_MULTIPLIER
         );
@@ -73,7 +73,7 @@ public class Odometry extends ThreeTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelVelocities() {
         return Arrays.asList(
-                encoderTicksToInches(frontEncoder.getCorrectedVelocity()) * X_MULTIPLIER,
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity()) * Y_MULTIPLIER,
                 encoderTicksToInches(middleEncoder.getCorrectedVelocity()) * X_MULTIPLIER,
                 encoderTicksToInches(rearEncoder.getCorrectedVelocity()) * Y_MULTIPLIER
         );

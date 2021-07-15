@@ -2,6 +2,7 @@ package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -17,16 +18,20 @@ import eu.qrobotics.ultimategoal.teamcode.util.AxesSigns;
 import eu.qrobotics.ultimategoal.teamcode.util.BNO055IMUUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.Encoder;
 
+@Config
 public class OdometryTwoWheel extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static Pose2d FRONT_POSE = new Pose2d(1.7173,  1.7097, Math.toRadians(-90));
-    public static Pose2d MIDDLE_POSE = new Pose2d(-4.2544, -2.4547, 0);
+    public static Pose2d FRONT_POSE = new Pose2d(1.6873,  1.7097, Math.toRadians(-90));
+    public static Pose2d MIDDLE_POSE = new Pose2d(-4.2544, -2.7047, 0);
 
     private Encoder frontEncoder, middleEncoder;
     private BNO055IMU imu;
+
+    public static double MULTIPLIER_X = 1;
+    public static double MULTIPLIER_Y = 1;
 
     public OdometryTwoWheel(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -60,8 +65,8 @@ public class OdometryTwoWheel extends TwoTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(frontEncoder.getCurrentPosition()),
-                encoderTicksToInches(middleEncoder.getCurrentPosition())
+                encoderTicksToInches(frontEncoder.getCurrentPosition()) * MULTIPLIER_Y,
+                encoderTicksToInches(middleEncoder.getCurrentPosition()) * MULTIPLIER_X
         );
     }
 
@@ -69,8 +74,8 @@ public class OdometryTwoWheel extends TwoTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelVelocities() {
         return Arrays.asList(
-                encoderTicksToInches(frontEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(middleEncoder.getCorrectedVelocity())
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity()) * MULTIPLIER_Y,
+                encoderTicksToInches(middleEncoder.getCorrectedVelocity()) * MULTIPLIER_X
         );
     }
 }

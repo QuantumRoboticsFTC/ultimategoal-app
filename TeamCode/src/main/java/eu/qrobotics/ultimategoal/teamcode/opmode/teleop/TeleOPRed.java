@@ -65,7 +65,7 @@ public class TeleOPRed extends OpMode {
     private ElapsedTime bufferUpTimer = new ElapsedTime();
     private ElapsedTime buffer2RingsTimer = new ElapsedTime();
     private ElapsedTime buffer3RingsTimer = new ElapsedTime();
-    private ElapsedTime autoPowershotsTimer = new ElapsedTime();
+    private ElapsedTime autoPowershotsTimer = new ElapsedTime(0);
 
     @Override
     public void loop() {

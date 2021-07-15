@@ -149,7 +149,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new /*T265*/OdometryTwoWheel(hardwareMap));
+        setLocalizer(new OdometryTwoWheel(hardwareMap));
 
         setPoseEstimate(autonomousEndPose);
     }
@@ -312,9 +312,14 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         fieldOverlay.setStroke("#3F51B5");
         DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
+        fieldOverlay.setStroke("#000000");
+        fieldOverlay.fillCircle(robot.outtake.outtakeTarget.getPosition().getX(), robot.outtake.outtakeTarget.getPosition().getY(), 3);
+
         packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
         packet.put("Target RPM", robot.outtake.getTargetRPM());
         packet.put("Current RPM", robot.outtake.getCurrentRPM());
+        packet.put("Target angle", robot.outtake.getTargetTurretAngle());
+        packet.put("Outtake target", robot.outtake.outtakeTarget);
 //        packet.put("Camera Pose2d", ((T265Odometry)getLocalizer()).getCameraUpdate().pose.toString());
 //        packet.put("Camera Speed", ((T265Odometry)getLocalizer()).getCameraUpdate().velocity.toString());
 //        packet.put("Camera Confidence", ((T265Odometry)getLocalizer()).getCameraUpdate().confidence);
