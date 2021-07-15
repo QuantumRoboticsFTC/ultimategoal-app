@@ -43,19 +43,26 @@ public class TrajectoriesTraditionalRedLeft {
     public static List<Trajectory> getTrajectoriesA() {
         List<Trajectory> trajectories = new ArrayList<>();
 
-        // high goal
+        // power shots
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-16)), 0)
+                .splineToSplineHeading(new Pose2d(0, -12, Math.toRadians(0)), 0)
                 .build());
 
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(16, -54, Math.toRadians(90)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(24, -45, Math.toRadians(90)), Math.toRadians(-90))
+                .build());
+
+        // bounce backs
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(60, -45, Math.toRadians(80)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(60, -20, Math.toRadians(80)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(90))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(0))
                 .build());
 
         return trajectories;
@@ -64,21 +71,22 @@ public class TrajectoriesTraditionalRedLeft {
     public static List<Trajectory> getTrajectoriesB() {
         List<Trajectory> trajectories = new ArrayList<>();
 
-        // high goal
+        // power shots
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-16)), 0)
+                .splineToSplineHeading(new Pose2d(0, -12, Math.toRadians(0)), 0)
                 .build());
 
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToLinearHeading(new Pose2d(48, -22, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(48, -18, Math.toRadians(90)))
                 .build());
 
-        // collect 1 Ring
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-10.5, -35, Math.toRadians(180)), Math.toRadians(-180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(-20, -35))
-                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-13)), 0)
+        // bounce backs
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(60, -12, Math.toRadians(-80)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(60, -36, Math.toRadians(-80)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(60, -30, Math.toRadians(-80)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
@@ -92,37 +100,28 @@ public class TrajectoriesTraditionalRedLeft {
     public static List<Trajectory> getTrajectoriesC() {
         List<Trajectory> trajectories = new ArrayList<>();
 
-        // high goal
+        // power shots
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -22, Math.toRadians(-16)), 0)
+                .splineToSplineHeading(new Pose2d(0, -12, Math.toRadians(0)), 0)
                 .build());
 
-        // 3 rings high goal
-        // break stack
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-170))
-                .splineToSplineHeading(new Pose2d(-50, -28, Math.toRadians(-3)), Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-45, -36), Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(-32.5, -36, Math.toRadians(-6)), Math.toRadians(0))
-                .build());
-        // intake
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
-                .splineToConstantHeading(new Vector2d(-28, -36), Math.toRadians(0))
+        // bounce backs & wobble
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(50, -12, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(60, -12, Math.toRadians(-80)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(60, -32, Math.toRadians(-80)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(57, -42, Math.toRadians(135)), Math.toRadians(-90))
                 .build());
 
-        // 1 ring high goal
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), MEDIUM_SLOW_VEL_CONSTRAINT, MEDIUM_SLOW_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(-4, -36, Math.toRadians(-6)))
-                .build());
-
-        // place first wobble
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(30, -34, Math.toRadians(90)))
-                .splineToConstantHeading(new Vector2d(62, -50), Math.toRadians(-90))
+        // shoot bounce backs
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(40, -12), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(180))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(0))
                 .build());
 
         return trajectories;

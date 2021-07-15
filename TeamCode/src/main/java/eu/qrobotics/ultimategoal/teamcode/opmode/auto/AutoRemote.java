@@ -94,7 +94,7 @@ public class AutoRemote extends LinearOpMode {
 
         robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
 
-        robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT;
+        robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
         robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
         robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
         robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
