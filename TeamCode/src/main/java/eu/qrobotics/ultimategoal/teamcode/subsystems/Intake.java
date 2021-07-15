@@ -26,8 +26,8 @@ public class Intake implements Subsystem {
     public static double INTAKE_OUT_SPEED = -0.8;
     public static double INTAKE_OUT_SLOW_SPEED = -0.4;
 
-    public static double STOPPER_DOWN_POSITION = 0.3;
-    public static double STOPPER_UP_POSITION = 0.16;
+    public static double STOPPER_DOWN_POSITION = 0.905;
+    public static double STOPPER_UP_POSITION = 0.2;
 
     public IntakeMode intakeMode;
     public IntakeStopperMode intakeStopperMode;
@@ -45,7 +45,7 @@ public class Intake implements Subsystem {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeMode = IntakeMode.IDLE;
-        intakeStopperMode = IntakeStopperMode.DOWN;
+        intakeStopperMode = IntakeStopperMode.UP;
     }
 
     public static boolean IS_DISABLED = false;
