@@ -24,7 +24,7 @@ import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_
 import static eu.qrobotics.ultimategoal.teamcode.subsystems.DriveConstants.SLOW_VEL_CONSTRAINT;
 
 public class TrajectoriesTraditionalRedLeft {
-    public static Pose2d START_POSE = new Pose2d(-63, -18, Math.toRadians(0));
+    public static Pose2d START_POSE = new Pose2d(-63, -17, Math.toRadians(0));
 
     private static Pose2d getTrajectorySequenceEndPose(List<Trajectory> trajectories) {
         if(trajectories.size() == 0)

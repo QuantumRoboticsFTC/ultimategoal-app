@@ -113,7 +113,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesA.get(1));
 
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
@@ -170,7 +170,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
 
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
@@ -238,7 +238,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
                 }
             }
 
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;

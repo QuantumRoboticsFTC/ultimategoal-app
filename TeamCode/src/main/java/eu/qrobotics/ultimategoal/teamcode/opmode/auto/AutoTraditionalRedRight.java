@@ -26,10 +26,10 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 
 @Config
 @Autonomous
-@Disabled
+//@Disabled
 public class AutoTraditionalRedRight extends LinearOpMode {
-    public static Point TOP_LEFT = new Point(500, 250);
-    public static Point BOTTOM_RIGHT = new Point(775, 500);
+    public static Point TOP_LEFT = new Point(1100, 550);
+    public static Point BOTTOM_RIGHT = new Point(850, 820);
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -55,8 +55,8 @@ public class AutoTraditionalRedRight extends LinearOpMode {
         webcam.showFpsMeterOnViewport(true);
         RingDetector ringDetector = new RingDetector(webcam, TOP_LEFT, BOTTOM_RIGHT);
 
-//        webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
-        webcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT); // We forgot camera so we bought shit one from Altex
+        webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+//        webcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT); // We forgot camera so we bought shit one from Altex
         FtcDashboard.getInstance().startCameraStream(webcam, 30);
 
         RingDetector.Stack ringStack = RingDetector.Stack.FOUR;
@@ -105,21 +105,19 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.sleep(0.2);
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
 
             robot.drive.followTrajectorySync(trajectoriesA.get(1));
 
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
-            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
             robot.drive.followTrajectorySync(trajectoriesA.get(2));
-
-            robot.sleep(15);
-
-            robot.drive.followTrajectorySync(trajectoriesA.get(3));
         }
         else if(ringStack == RingDetector.Stack.ONE) {
             // B
@@ -139,22 +137,16 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.sleep(0.2);
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
 
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.sleep(0.2);
+            robot.intake.intakeMode = Intake.IntakeMode.IN;
+
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
 
-            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
-            robot.sleep(0.6);
-            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
-            robot.sleep(0.2);
-            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
-            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.intake.intakeMode = Intake.IntakeMode.IN;
-            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
-
-            robot.drive.followTrajectorySync(trajectoriesB.get(2));
-
+            robot.sleep(1.0);
+            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
             robot.sleep(0.2);
-            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             robot.buffer.pushAttempts = 0;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4) {
@@ -165,6 +157,22 @@ public class AutoTraditionalRedRight extends LinearOpMode {
                 }
             }
             robot.sleep(0.2);
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
+            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+
+            robot.drive.followTrajectorySync(trajectoriesB.get(2));
+
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
+            robot.sleep(0.6);
+            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
+            robot.sleep(0.2);
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+
+            robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.intake.intakeMode = Intake.IntakeMode.IN;
+            robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(3));
         }
@@ -189,26 +197,23 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
-
-            robot.drive.followTrajectorySync(trajectoriesC.get(1));
-
             robot.intake.intakeMode = Intake.IntakeMode.IN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
 
-            robot.drive.followTrajectory(trajectoriesC.get(2));
+            robot.drive.followTrajectory(trajectoriesC.get(1));
 
             while(robot.drive.isBusy()) {
-                if(robot.buffer.getRingCount() >= 2) {
-                    robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
-                    robot.drive.cancelTrajectory();
-                }
                 if(robot.buffer.getRingCount() >= 3) {
                     robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
                 }
             }
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
+                robot.sleep(1.0);
+                robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
+                robot.sleep(1.0);
                 robot.intake.intakeMode = Intake.IntakeMode.OUT;
-                robot.sleep(0.4);
+                robot.sleep(1.0);
             }
             robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
@@ -227,7 +232,7 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
-            robot.drive.followTrajectory(trajectoriesC.get(3));
+            robot.drive.followTrajectory(trajectoriesC.get(2));
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
                 robot.sleep(3);
@@ -249,16 +254,19 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.IDLE;
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(4));
+            robot.drive.followTrajectorySync(trajectoriesC.get(3));
 
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.5);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
-            robot.drive.followTrajectorySync(trajectoriesC.get(5));
+            robot.drive.followTrajectorySync(trajectoriesC.get(4));
         }
 
         robot.sleep(0.2);

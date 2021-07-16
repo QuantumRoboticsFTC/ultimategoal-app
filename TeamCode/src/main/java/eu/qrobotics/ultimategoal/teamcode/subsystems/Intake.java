@@ -17,6 +17,7 @@ public class Intake implements Subsystem {
     }
     public enum IntakeStopperMode {
         DOWN,
+        MID,
         UP,
     }
 
@@ -27,6 +28,7 @@ public class Intake implements Subsystem {
     public static double INTAKE_OUT_SLOW_SPEED = -0.4;
 
     public static double STOPPER_DOWN_POSITION = 0.905;
+    public static double STOPPER_MID_POSITION = 0.4;
     public static double STOPPER_UP_POSITION = 0.2;
 
     public IntakeMode intakeMode;
@@ -76,6 +78,9 @@ public class Intake implements Subsystem {
         switch (intakeStopperMode) {
             case DOWN:
                 intakeStopper.setPosition(STOPPER_DOWN_POSITION);
+                break;
+            case MID:
+                intakeStopper.setPosition(STOPPER_MID_POSITION);
                 break;
             case UP:
                 intakeStopper.setPosition(STOPPER_UP_POSITION);

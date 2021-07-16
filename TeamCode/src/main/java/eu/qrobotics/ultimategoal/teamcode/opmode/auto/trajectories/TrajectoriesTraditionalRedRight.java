@@ -43,20 +43,17 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -53, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-10, -57, Math.toRadians(0)), 0)
                 .build());
 
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(0, -60, Math.toRadians(-180)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(4, -60, Math.toRadians(-180)), Math.toRadians(0))
                 .build());
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-30, -60), Math.toRadians(180))
-                .build());
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(10, -36), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(0, -60), Math.toRadians(180))
                 .build());
 
         return trajectories;
@@ -67,24 +64,24 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -53, Math.toRadians(0)), 0)
-                .build());
-
-        // place first wobble
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToLinearHeading(new Pose2d(40, -55, Math.toRadians(-90)))
+                .splineToConstantHeading(new Vector2d(-10, -57), 0)
                 .build());
 
         // collect 1 Ring
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-10.5, -40, Math.toRadians(180)), Math.toRadians(-180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(-20, -40))
-                .splineToSplineHeading(new Pose2d(-20, -53, Math.toRadians(0)), 0)
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-170))
+                .splineToConstantHeading(new Vector2d(-40, -36), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-20, -36), 0)
+                .build());
+
+        // place first wobble
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(12, -58, Math.toRadians(-90)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(30, -53), Math.toRadians(0))
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
-                .lineToConstantHeading(new Vector2d(12, -60))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(12, -57, Math.toRadians(180)), Math.toRadians(180))
                 .build());
 
         return trajectories;
@@ -95,34 +92,29 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-20, -53, Math.toRadians(0)), 0)
+                .splineToConstantHeading(new Vector2d(-10, -57), 0)
                 .build());
 
-        // 3 rings high goal
-        // break stack
+        // collect 2 Rings
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-170))
-                .splineToSplineHeading(new Pose2d(-50, -47, Math.toRadians(-3)), Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-32.5, -35), Math.toRadians(0))
-                .build());
-        // intake
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT)
-                .splineToConstantHeading(new Vector2d(-25, -35), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-40, -36), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-20, -36), 0)
                 .build());
 
-        // 1 ring high goal
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0)/*, SLOW_VEL_CONSTRAINT, SLOW_ACCEL_CONSTRAINT*/)
-                .lineToSplineHeading(new Pose2d(-10, -35, Math.toRadians(-3)))
+        // collect another 2 Rings
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-10, -36), 0)
                 .build());
 
         // place first wobble
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(10, -60, Math.toRadians(180)), Math.toRadians(0))
-                .lineToLinearHeading(new Pose2d(60, -60, Math.toRadians(180)))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(12, -58, Math.toRadians(180)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(41, -61), Math.toRadians(0))
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToSplineHeading(new Pose2d(12, -60, Math.toRadians(180)))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(12, -57, Math.toRadians(180)), Math.toRadians(180))
                 .build());
 
         return trajectories;

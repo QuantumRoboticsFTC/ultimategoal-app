@@ -105,7 +105,7 @@ public class TeleOPRed extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
             if(gamepad1.left_trigger > 0.25) {
-                robot.drive.setPoseEstimate(new Pose2d(2, -39, 0));
+                robot.drive.setPoseEstimate(new Pose2d(1, -39, 0));
             }
             if(stickyGamepad1.y) {
                 autoPowershotsTimer.reset();

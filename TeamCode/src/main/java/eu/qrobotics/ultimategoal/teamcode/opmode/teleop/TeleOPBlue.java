@@ -91,7 +91,7 @@ public class TeleOPBlue extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(-63, 63, 0));
             }
             if(gamepad1.left_trigger > 0.25) {
-                robot.drive.setPoseEstimate(new Pose2d(2, 33, 0));
+                robot.drive.setPoseEstimate(new Pose2d(1, 33, 0));
             }
         }
         else {
