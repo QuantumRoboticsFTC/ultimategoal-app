@@ -39,7 +39,7 @@ public class OuttakeTest extends OpMode {
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
         }
         if(stickyGamepad1.y) {
-            robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
+            robot.drive.setPoseEstimate(new Pose2d(1, -39, 0));
         }
         if(stickyGamepad1.dpad_up) {
             robot.outtake.overrideRPM += 100;
@@ -55,6 +55,22 @@ public class OuttakeTest extends OpMode {
         }
         if(stickyGamepad1.x) {
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_SINGLE;
+        }
+        if(stickyGamepad1.left_bumper) {
+            if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.HIGH_GOAL)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_1)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_2)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
+        }
+        if(stickyGamepad1.right_bumper) {
+            if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_1)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_2)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_3)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
         }
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());

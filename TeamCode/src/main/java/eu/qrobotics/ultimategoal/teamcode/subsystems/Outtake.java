@@ -57,7 +57,8 @@ public class Outtake implements Subsystem {
     public static double MAX_TURRET_ANGLE = Math.toRadians(18.4);
 
     public static boolean RED_ALLIANCE = true;
-    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(95, 0, 40, 15);
+    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(600, 10, 100, 15);
+    public static PIDFCoefficients PREV_OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(OUTTAKE_PIDF_COEFFICIENTS);
 
     private static class Coefficients {
         public double kA, kB, kC, kD;
@@ -65,8 +66,8 @@ public class Outtake implements Subsystem {
         public double apply(double val) { return kA * val * val * val + kB * val * val + kC * val + kD; }
     }
 
-    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1910.281);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(0.002944254, -0.7317014, 57.38531, 1300.281);
+    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 14928.33);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25304.94);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;
@@ -102,6 +103,14 @@ public class Outtake implements Subsystem {
     @Override
     public void update() {
         if(IS_DISABLED) return;
+        if(PREV_OUTTAKE_PIDF_COEFFICIENTS.p != OUTTAKE_PIDF_COEFFICIENTS.p ||
+                PREV_OUTTAKE_PIDF_COEFFICIENTS.i != OUTTAKE_PIDF_COEFFICIENTS.i ||
+                PREV_OUTTAKE_PIDF_COEFFICIENTS.d != OUTTAKE_PIDF_COEFFICIENTS.d ||
+                PREV_OUTTAKE_PIDF_COEFFICIENTS.f != OUTTAKE_PIDF_COEFFICIENTS.f)
+        {
+            outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, OUTTAKE_PIDF_COEFFICIENTS);
+            PREV_OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(OUTTAKE_PIDF_COEFFICIENTS);
+        }
         switch (outtakeMode) {
             case OFF:
                 outtakeMotor.setPower(0);
@@ -138,7 +147,10 @@ public class Outtake implements Subsystem {
     }
 
     public double getDistance() {
-        return robot.drive.getPoseEstimate().vec().minus(outtakeTarget.getPosition()).norm();
+        Vector2d currentPos = robot.drive.getPoseEstimate().vec();
+        if(currentPos.getY() > 0 )
+            currentPos = new Vector2d(currentPos.getX(), 0);
+        return currentPos.minus(outtakeTarget.getPosition()).norm();
     }
 
     public double getTargetRPM() {
