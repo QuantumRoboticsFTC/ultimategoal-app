@@ -29,6 +29,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
     public Outtake outtake;
     public WobbleGoalGrabber wobbleGoalGrabber;
     public RingStopper ringStopper;
+    public LEDStrip ledStrip;
 
     private List<Subsystem> subsystems;
     private List<Subsystem> subsystemsWithProblems;
@@ -123,13 +124,19 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
             wobbleGoalGrabber = new WobbleGoalGrabber(opMode.hardwareMap, this);
             subsystems.add(wobbleGoalGrabber);
         } catch (Exception e) {
-            Log.w(TAG, "skipping WobbleGoalGrabber");
+            Log.w(TAG, "skipping Wobble Goal Grabber");
         }
         try {
             ringStopper = new RingStopper(opMode.hardwareMap, this);
             subsystems.add(ringStopper);
         } catch (Exception e) {
-            Log.w(TAG, "skipping ringStopper");
+            Log.w(TAG, "skipping Ring Stopper");
+        }
+        try {
+            ledStrip = new LEDStrip(opMode.hardwareMap, this);
+            subsystems.add(ledStrip);
+        } catch (Exception e) {
+            Log.w(TAG, "skipping LED Strip");
         }
         //endregion
 
