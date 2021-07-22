@@ -6,8 +6,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.MovingStatistics;
+import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.concurrent.ExecutorService;
 
 @Config
 public class Buffer implements Subsystem {
@@ -70,7 +73,19 @@ public class Buffer implements Subsystem {
 
         ringSensorValues = new MovingStatistics(isAutonomous ? 16 : 4);
         ringSensorValues.add(bufferRingSensor.getDistance(DistanceUnit.MM));
+
+        sensorThread = ThreadPool.newSingleThreadExecutor("buffer sensor");
+        sensorThread.submit(getSensorDistance);
     }
+
+    private ExecutorService sensorThread;
+
+    private Runnable getSensorDistance = () -> {
+        while (!Thread.currentThread().isInterrupted()) {
+            double sensorDistance = bufferRingSensor.getDistance(DistanceUnit.MM);
+            ringSensorValues.add(sensorDistance);
+        }
+    };
 
     public double lastSensorTime = 0;
 
@@ -88,7 +103,6 @@ public class Buffer implements Subsystem {
     }
 
     public static boolean IS_DISABLED = false;
-    public double lastDistance = 0;
 
     public int pushAttempts = 0;
 
@@ -98,21 +112,10 @@ public class Buffer implements Subsystem {
     public void update() {
         if(IS_DISABLED) return;
         double start = getCurrentTime();
-        double distance = -1;
-        if(SENSOR_ENABLE) {
-            if(sensorTime.milliseconds() > SENSOR_WAIT) {
-                sensorTime.reset();
-                distance = bufferRingSensor.getDistance(DistanceUnit.MM);
-            }
-        }
-        lastDistance = distance;
         lastSensorTime = getCurrentTime() - start;
         avgSensorTime1.add(lastSensorTime);
         avgSensorTime10.add(lastSensorTime);
         avgSensorTime250.add(lastSensorTime);
-        if(distance >= 0) {
-            ringSensorValues.add(distance);
-        }
         switch (bufferMode) {
             case DOWN:
                 bufferServo.setPosition(BUFFER_DOWN_POSITION);
@@ -178,6 +181,11 @@ public class Buffer implements Subsystem {
         }
     }
 
+    @Override
+    public void stop() {
+        sensorThread.shutdownNow();
+    }
+
     private void push() {
         if (bufferPusherState == BufferPusherState.IDLE) {
             bufferPusherState = BufferPusherState.PUSHING;
@@ -193,7 +201,7 @@ public class Buffer implements Subsystem {
         if(distance > 108) {
             return 0;
         }
-        if(distance > 95) {
+        if(distance > 98) {
             return 1;
         }
         if(distance > 85) {

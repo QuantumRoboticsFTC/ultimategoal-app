@@ -7,4 +7,6 @@ public interface Subsystem {
      * TODO: Return telemetry.
      */
     void update();
+
+    default void stop() { }
 }

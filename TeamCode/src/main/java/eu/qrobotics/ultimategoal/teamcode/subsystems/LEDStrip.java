@@ -17,6 +17,14 @@ public class LEDStrip implements Subsystem {
 
     public static boolean IS_DISABLED = false;
 
+    private RevBlinkinLedDriver.BlinkinPattern lastPattern;
+    private void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+        if(pattern != lastPattern) {
+            blinkinLedDriver.setPattern(pattern);
+            lastPattern = pattern;
+        }
+    }
+
     @Override
     public void update() {
         if(IS_DISABLED) return;
@@ -25,11 +33,11 @@ public class LEDStrip implements Subsystem {
         boolean turretOutOfRange = !robot.outtake.isTurretInRange();
 
         if(notInLaunchZone && turretOutOfRange)
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
         else if(notInLaunchZone)
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
         else if(turretOutOfRange)
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         else
             blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }

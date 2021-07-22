@@ -13,7 +13,9 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Config
@@ -36,6 +38,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
     private ExecutorService subsystemUpdateExecutor;
     public FtcDashboard dashboard;
     public MovingStatistics top250, top100, top10;
+    public Map<Subsystem, MovingStatistics> top100Subsystems = new HashMap<>();
 
     private boolean started;
 
@@ -55,7 +58,9 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
                 for (Subsystem subsystem : subsystems) { // Update all subsystems
                     if (subsystem == null) continue;
                     try {
+                        double t = getCurrentTime();
                         subsystem.update();
+                        top100Subsystems.get(subsystem).add(getCurrentTime() - t);
                         subsystemsWithProblems.remove(subsystem);
                     } catch (Throwable t) {
                         Log.w(TAG, "Subsystem update failed for " + subsystem.getClass().getSimpleName() + ": " + t.getMessage());
@@ -138,6 +143,10 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         } catch (Exception e) {
             Log.w(TAG, "skipping LED Strip");
         }
+
+        for (Subsystem subsystem : subsystems) {
+            top100Subsystems.put(subsystem, new MovingStatistics(100));
+        }
         //endregion
 
         // Initialize update thread
@@ -156,6 +165,9 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         if (started && subsystemUpdateExecutor != null) {
             subsystemUpdateExecutor.shutdownNow();
             subsystemUpdateExecutor = null;
+            for(Subsystem subsystem : subsystems) {
+                subsystem.stop();
+            }
         }
     }
 

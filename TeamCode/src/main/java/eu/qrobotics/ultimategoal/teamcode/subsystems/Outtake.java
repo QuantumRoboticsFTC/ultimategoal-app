@@ -1,7 +1,5 @@
 package eu.qrobotics.ultimategoal.teamcode.subsystems;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +13,8 @@ import com.qualcomm.robotcore.util.Range;
 @Config
 public class Outtake implements Subsystem {
     private static final Vector2d OUTTAKE_ROBOT_POS = new Vector2d(0, -5.5);
-    private static final double IDLE_RPM = 3500;
+    private static final double DEFAULT_IDLE_RPM = 3500;
+    private OuttakeMode lastOuttakeMode;
 
     public enum OuttakeMode {
         ON,
@@ -99,36 +98,44 @@ public class Outtake implements Subsystem {
     public static boolean IS_DISABLED = false;
 
     private double lastTurretPosition = -1;
+    private double lastTicks = DEFAULT_IDLE_RPM * TICKS_PER_REV / 60;
+    public Double robotHeadingOverride = null;
 
     @Override
     public void update() {
         if(IS_DISABLED) return;
-        if(PREV_OUTTAKE_PIDF_COEFFICIENTS.p != OUTTAKE_PIDF_COEFFICIENTS.p ||
-                PREV_OUTTAKE_PIDF_COEFFICIENTS.i != OUTTAKE_PIDF_COEFFICIENTS.i ||
-                PREV_OUTTAKE_PIDF_COEFFICIENTS.d != OUTTAKE_PIDF_COEFFICIENTS.d ||
-                PREV_OUTTAKE_PIDF_COEFFICIENTS.f != OUTTAKE_PIDF_COEFFICIENTS.f)
-        {
-            outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, OUTTAKE_PIDF_COEFFICIENTS);
-            PREV_OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(OUTTAKE_PIDF_COEFFICIENTS);
-        }
+//        if(PREV_OUTTAKE_PIDF_COEFFICIENTS.p != OUTTAKE_PIDF_COEFFICIENTS.p ||
+//                PREV_OUTTAKE_PIDF_COEFFICIENTS.i != OUTTAKE_PIDF_COEFFICIENTS.i ||
+//                PREV_OUTTAKE_PIDF_COEFFICIENTS.d != OUTTAKE_PIDF_COEFFICIENTS.d ||
+//                PREV_OUTTAKE_PIDF_COEFFICIENTS.f != OUTTAKE_PIDF_COEFFICIENTS.f)
+//        {
+//            outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, OUTTAKE_PIDF_COEFFICIENTS);
+//            PREV_OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(OUTTAKE_PIDF_COEFFICIENTS);
+//        }
         switch (outtakeMode) {
             case OFF:
-                outtakeMotor.setPower(0);
+                if(lastOuttakeMode != OuttakeMode.OFF) {
+                    outtakeMotor.setPower(0);
+                }
                 break;
             case IDLE:
-                outtakeMotor.setVelocity(IDLE_RPM * TICKS_PER_REV / 60);
+                if(lastOuttakeMode != OuttakeMode.IDLE) {
+                    outtakeMotor.setVelocity(lastTicks);
+                }
                 break;
             case ON:
-                outtakeMotor.setVelocity(getTargetTicks());
+                outtakeMotor.setVelocity(lastTicks = getTargetTicks());
                 break;
         }
+        lastOuttakeMode = outtakeMode;
         switch (turretMode) {
             case OFF:
                 turretServo.setPosition(TURRET_IDLE_POSITION);
                 break;
             case ON:
-                if(-Math.PI / 2 < getTargetTurretAngle() && getTargetTurretAngle() < Math.PI / 2) {
-                    double targetPosition = getTargetTurretPosition();
+                double targetTurretAngle = getTargetTurretAngle();
+                if(-Math.PI / 2 < targetTurretAngle && targetTurretAngle < Math.PI / 2) {
+                    double targetPosition = angleToTurretPosition(targetTurretAngle);
                     if(Math.abs(lastTurretPosition - targetPosition) > 0.02) {
                         turretServo.setPosition(targetPosition);
                         lastTurretPosition = targetPosition;
@@ -170,7 +177,8 @@ public class Outtake implements Subsystem {
     public double getTargetTurretAngle() {
         Vector2d targetPosition = outtakeTarget.getPosition();
         Vector2d outtakePosition = robot.drive.getPoseEstimate().vec().plus(OUTTAKE_ROBOT_POS.rotated(robot.drive.getPoseEstimate().getHeading()));
-        double targetAngle = targetPosition.minus(outtakePosition).angle() - robot.drive.getPoseEstimate().getHeading();
+        double robotHeading = robotHeadingOverride != null ? robotHeadingOverride : robot.drive.getPoseEstimate().getHeading();
+        double targetAngle = targetPosition.minus(outtakePosition).angle() - robotHeading;
         while(targetAngle > Math.PI)
             targetAngle -= 2 * Math.PI;
         while(targetAngle < -Math.PI)

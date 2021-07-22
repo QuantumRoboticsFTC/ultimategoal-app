@@ -34,6 +34,9 @@ public class Intake implements Subsystem {
     public IntakeMode intakeMode;
     public IntakeStopperMode intakeStopperMode;
 
+    private IntakeMode lastIntakeMode;
+    private IntakeStopperMode lastIntakeStopperMode;
+
     private DcMotor intakeMotor;
     private Servo intakeStopper;
 
@@ -58,33 +61,39 @@ public class Intake implements Subsystem {
         if(robot.buffer.bufferMode != Buffer.BufferMode.COLLECT && intakeMode == IntakeMode.IN) {
             intakeMode = IntakeMode.IDLE;
         }
-        switch (intakeMode) {
-            case IN:
-                intakeMotor.setPower(INTAKE_IN_SPEED);
-                break;
-            case IN_SLOW:
-                intakeMotor.setPower(INTAKE_IN_SLOW_SPEED);
-                break;
-            case IDLE:
-                intakeMotor.setPower(INTAKE_IDLE_SPEED);
-                break;
-            case OUT:
-                intakeMotor.setPower(INTAKE_OUT_SPEED);
-                break;
-            case OUT_SLOW:
-                intakeMotor.setPower(INTAKE_OUT_SLOW_SPEED);
-                break;
+        if(lastIntakeMode != intakeMode) {
+            switch (intakeMode) {
+                case IN:
+                    intakeMotor.setPower(INTAKE_IN_SPEED);
+                    break;
+                case IN_SLOW:
+                    intakeMotor.setPower(INTAKE_IN_SLOW_SPEED);
+                    break;
+                case IDLE:
+                    intakeMotor.setPower(INTAKE_IDLE_SPEED);
+                    break;
+                case OUT:
+                    intakeMotor.setPower(INTAKE_OUT_SPEED);
+                    break;
+                case OUT_SLOW:
+                    intakeMotor.setPower(INTAKE_OUT_SLOW_SPEED);
+                    break;
+            }
+            lastIntakeMode = intakeMode;
         }
-        switch (intakeStopperMode) {
-            case DOWN:
-                intakeStopper.setPosition(STOPPER_DOWN_POSITION);
-                break;
-            case MID:
-                intakeStopper.setPosition(STOPPER_MID_POSITION);
-                break;
-            case UP:
-                intakeStopper.setPosition(STOPPER_UP_POSITION);
-                break;
+        if(lastIntakeStopperMode != intakeStopperMode) {
+            switch (intakeStopperMode) {
+                case DOWN:
+                    intakeStopper.setPosition(STOPPER_DOWN_POSITION);
+                    break;
+                case MID:
+                    intakeStopper.setPosition(STOPPER_MID_POSITION);
+                    break;
+                case UP:
+                    intakeStopper.setPosition(STOPPER_UP_POSITION);
+                    break;
+            }
+            lastIntakeStopperMode = intakeStopperMode;
         }
     }
 }
