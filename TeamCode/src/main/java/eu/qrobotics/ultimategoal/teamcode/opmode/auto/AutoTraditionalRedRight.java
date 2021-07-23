@@ -28,8 +28,8 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 @Autonomous
 //@Disabled
 public class AutoTraditionalRedRight extends LinearOpMode {
-    public static Point TOP_LEFT = new Point(1100, 550);
-    public static Point BOTTOM_RIGHT = new Point(850, 820);
+    public static Point TOP_LEFT = new Point(1250, 550);
+    public static Point BOTTOM_RIGHT = new Point(1000, 840);
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -61,7 +61,7 @@ public class AutoTraditionalRedRight extends LinearOpMode {
 
         RingDetector.Stack ringStack = RingDetector.Stack.FOUR;
 
-        while(!isStarted()) {
+        while(!isStarted() && !isStopRequested()) {
             if(gamepad1.a) {
                 robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
             }

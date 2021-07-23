@@ -63,7 +63,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
         RingDetector.Stack ringStack = RingDetector.Stack.FOUR;
 
-        while(!isStarted()) {
+        while(!isStarted() && !isStopRequested()) {
             if(gamepad1.a) {
                 robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
             }
@@ -84,16 +84,20 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
         robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
 
         robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
-        robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
+//        robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
         robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
         robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
 
         if(ringStack == RingDetector.Stack.ZERO) {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
+            robot.sleep(0.5);
+            robot.outtake.robotHeadingOverride = robot.drive.getPoseEstimate().getHeading();
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
-            while(!robot.outtake.isReady()) {
+            robot.sleep(0.2);
+            while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
             }
             robot.sleep(0.5);
@@ -109,6 +113,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
             robot.sleep(1.0);
 
             robot.outtake.outtakeMode = Outtake.OuttakeMode.IDLE;
+            robot.outtake.robotHeadingOverride = null;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
 
             robot.drive.followTrajectorySync(trajectoriesA.get(1));
@@ -136,21 +141,29 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
             }
             robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.4);
             robot.buffer.pushAttempts = 0;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4 && !isStopRequested()) {
                 robot.sleep(0.05);
             }
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
 
             robot.drive.followTrajectorySync(trajectoriesA.get(3));
         }
         else if(ringStack == RingDetector.Stack.ONE) {
             // B
             robot.drive.followTrajectorySync(trajectoriesB.get(0));
+            robot.sleep(0.5);
+            robot.outtake.robotHeadingOverride = robot.drive.getPoseEstimate().getHeading();
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
-            while(!robot.outtake.isReady()) {
+            robot.sleep(0.2);
+            while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
             }
             robot.sleep(0.5);
@@ -167,6 +180,7 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeMode = Outtake.OuttakeMode.IDLE;
+            robot.outtake.robotHeadingOverride = null;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
 
@@ -194,21 +208,29 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.4);
             robot.buffer.pushAttempts = 0;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4 && !isStopRequested()) {
                 robot.sleep(0.05);
             }
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(3));
         }
         else if(ringStack == RingDetector.Stack.FOUR) {
             // C
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
+            robot.sleep(0.5);
+            robot.outtake.robotHeadingOverride = robot.drive.getPoseEstimate().getHeading();
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
-            while(!robot.outtake.isReady()) {
+            robot.sleep(0.2);
+            while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
             }
             robot.sleep(0.5);
@@ -225,6 +247,8 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeMode = Outtake.OuttakeMode.IDLE;
+            robot.outtake.robotHeadingOverride = null;
+
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
             robot.drive.followTrajectory(trajectoriesC.get(1));
@@ -251,12 +275,16 @@ public class AutoTraditionalRedLeft extends LinearOpMode {
 
             robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.4);
             robot.buffer.pushAttempts = 0;
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
             while(robot.buffer.bufferPusherMode != Buffer.BufferPusherMode.IDLE && robot.buffer.pushAttempts < 4 && !isStopRequested()) {
                 robot.sleep(0.05);
             }
+            robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
         }

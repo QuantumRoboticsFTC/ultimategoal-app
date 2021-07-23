@@ -30,8 +30,8 @@ public class Outtake implements Subsystem {
     public enum OuttakeTarget {
         HIGH_GOAL(new Vector2d(72, -36), new Vector2d(72, 36)),
         POWER_SHOT_1(new Vector2d(72, -20), new Vector2d(72, 22)),
-        POWER_SHOT_2(new Vector2d(72, -12.5), new Vector2d(72, 12)),
-        POWER_SHOT_3(new Vector2d(72, -5), new Vector2d(72, 2));
+        POWER_SHOT_2(new Vector2d(72, -12.5), new Vector2d(72, 14)),
+        POWER_SHOT_3(new Vector2d(72, -5), new Vector2d(72, 6));
 
         Vector2d redPosition;
         Vector2d bluePosition;
@@ -66,7 +66,7 @@ public class Outtake implements Subsystem {
     }
 
     public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 14928.33);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25304.94);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25204.94);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;

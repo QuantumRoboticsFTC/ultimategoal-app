@@ -57,7 +57,7 @@ public class TrajectoriesTraditionalRedLeft {
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
                 .splineToSplineHeading(new Pose2d(60, -45, Math.toRadians(80)), Math.toRadians(90))
                 .splineToSplineHeading(new Pose2d(60, -20, Math.toRadians(80)), Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-10, -18, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
@@ -78,7 +78,7 @@ public class TrajectoriesTraditionalRedLeft {
 
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .lineToLinearHeading(new Pose2d(48, -18, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(48, -22, Math.toRadians(90)))
                 .build());
 
         // bounce backs
@@ -86,7 +86,7 @@ public class TrajectoriesTraditionalRedLeft {
                 .splineToSplineHeading(new Pose2d(60, -12, Math.toRadians(-80)), Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(60, -36, Math.toRadians(-80)), Math.toRadians(90))
                 .splineToSplineHeading(new Pose2d(60, -30, Math.toRadians(-80)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-10, -18, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
@@ -110,13 +110,13 @@ public class TrajectoriesTraditionalRedLeft {
                 .splineToSplineHeading(new Pose2d(50, -12, Math.toRadians(0)), Math.toRadians(0))
                 .splineToSplineHeading(new Pose2d(60, -12, Math.toRadians(-80)), Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(60, -32, Math.toRadians(-80)), Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(57, -42, Math.toRadians(135)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(57, -45, Math.toRadians(135)), Math.toRadians(-90))
                 .build());
 
         // shoot bounce backs
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(40, -12), Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-10, -12, Math.toRadians(-10)), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(40, -18), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-10, -18, Math.toRadians(-10)), Math.toRadians(180))
                 .build());
 
         // park
