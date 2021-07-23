@@ -26,10 +26,8 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 @Autonomous
 //@Disabled
 public class AutoTraditionalBlueRight extends LinearOpMode {
-    //    public static Point TOP_LEFT = new Point(500, 250);
-//    public static Point BOTTOM_RIGHT = new Point(775, 500);
-    public static Point TOP_LEFT = new Point(1100, 550);
-    public static Point BOTTOM_RIGHT = new Point(850, 820); // Camera
+    public static Point TOP_LEFT = new Point(1300, 400);
+    public static Point BOTTOM_RIGHT = new Point(925, 850); // Camera
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -283,7 +281,7 @@ public class AutoTraditionalBlueRight extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
         }
 
-        robot.sleep(0.2);
+        robot.sleep(30.0); // anti defence
 
         robot.stop();
     }

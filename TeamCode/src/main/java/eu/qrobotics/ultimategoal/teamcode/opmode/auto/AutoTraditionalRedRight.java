@@ -28,8 +28,8 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 @Autonomous
 //@Disabled
 public class AutoTraditionalRedRight extends LinearOpMode {
-    public static Point TOP_LEFT = new Point(1250, 550);
-    public static Point BOTTOM_RIGHT = new Point(1000, 840);
+    public static Point TOP_LEFT = new Point(1300, 200);
+    public static Point BOTTOM_RIGHT = new Point(925, 850); // Camera
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -91,6 +91,9 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -123,6 +126,9 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             // B
             robot.drive.followTrajectorySync(trajectoriesB.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -140,10 +146,11 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.sleep(0.2);
             robot.intake.intakeMode = Intake.IntakeMode.IN;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
 
-            robot.sleep(1.0);
+            robot.sleep(2.0);
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
             robot.sleep(0.2);
@@ -159,6 +166,7 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.sleep(0.2);
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(2));
 
@@ -171,7 +179,6 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
-            robot.intake.intakeMode = Intake.IntakeMode.IN;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(3));
@@ -180,6 +187,9 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             // C
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -255,12 +265,13 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
+            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
 
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
-            robot.sleep(0.5);
+            robot.sleep(0.8);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
@@ -269,7 +280,7 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesC.get(4));
         }
 
-        robot.sleep(0.2);
+        robot.sleep(30.0); // anti defence
 
         robot.stop();
     }

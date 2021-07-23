@@ -19,7 +19,7 @@ public class RingDetector {
     private RingTracker ringTracker;
     private Point pt1, pt2;
 
-    public static double THRESHOLD_FOUR = 3500000;
+    public static double THRESHOLD_FOUR = 2700000;
     public static double THRESHOLD_ONE = 300000;
 
     public RingDetector(OpenCvCamera camera, Point pt1, Point pt2) {

@@ -76,7 +76,7 @@ public class TrajectoriesTraditionalBlueLeft {
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(90))
                 .splineToSplineHeading(new Pose2d(15, 58, Math.toRadians(90)), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(37, 53), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(39, 53), Math.toRadians(0))
                 .build());
 
         // park

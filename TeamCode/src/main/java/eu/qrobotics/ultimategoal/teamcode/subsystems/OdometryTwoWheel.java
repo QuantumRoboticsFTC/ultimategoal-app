@@ -57,6 +57,11 @@ public class OdometryTwoWheel extends TwoTrackingWheelLocalizer {
         return imu.getAngularOrientation().firstAngle;
     }
 
+    @Override
+    public Double getHeadingVelocity() {
+        return (double) imu.getAngularVelocity().xRotationRate;
+    }
+
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }

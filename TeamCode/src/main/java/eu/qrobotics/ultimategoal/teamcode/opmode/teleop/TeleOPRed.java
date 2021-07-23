@@ -105,7 +105,7 @@ public class TeleOPRed extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(-63, -63, 0));
             }
             if(gamepad1.left_trigger > 0.25) {
-                robot.drive.setPoseEstimate(new Pose2d(1, -39, 0));
+                robot.drive.setPoseEstimate(new Pose2d(1, -63, 0));
             }
             if(stickyGamepad1.y) {
                 autoPowershotsTimer.reset();
@@ -140,6 +140,14 @@ public class TeleOPRed extends OpMode {
                 robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
             }
         }
+        if(stickyGamepad1.x) {
+            // turn left to go right
+            robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(-1))));
+        }
+        if(stickyGamepad1.b) {
+            // turn right to go left
+            robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(1))));
+        }
 
         if (wobbleGrabTimer.seconds() > 0.5 && wobbleGrabTimer.seconds() < 0.6) {
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.UP;
@@ -169,7 +177,6 @@ public class TeleOPRed extends OpMode {
         if(stickyGamepad2.b) {
             robot.buffer.bufferMode = BufferMode.OUTTAKE;
             robot.outtake.outtakeMode = OuttakeMode.ON;
-            robot.intake.intakeMode = IntakeMode.IN_SLOW;
             bufferUpTimer.reset();
         }
 
@@ -202,23 +209,41 @@ public class TeleOPRed extends OpMode {
         if(robot.buffer.bufferMode == BufferMode.OUTTAKE && robot.buffer.bufferPusherMode != BufferPusherMode.IDLE && robot.outtake.outtakeTarget == Outtake.OuttakeTarget.HIGH_GOAL) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
         }
-        if(gamepad2.dpad_up) {
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+        if(gamepad2.right_trigger > 0.25) {
+            if(stickyGamepad2.dpad_up) {
+                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(1, 0, 0)));
+            }
+            if(stickyGamepad2.dpad_down) {
+                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(-1, 0, 0)));
+            }
+            if(stickyGamepad2.dpad_left) {
+                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, 1, 0)));
+            }
+            if(stickyGamepad2.dpad_right) {
+                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, -1, 0)));
+            }
         }
-        if(gamepad2.dpad_down) {
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
-        }
-        if(gamepad2.dpad_left) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
-        }
-        if(gamepad2.dpad_right) {
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+        else {
+            if (gamepad2.dpad_up) {
+                robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+            }
+            if (gamepad2.dpad_down) {
+                robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
+            }
+            if (gamepad2.dpad_left) {
+                robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+            }
+            if (gamepad2.dpad_right) {
+                robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+            }
         }
         if(gamepad2.left_trigger > 0.25) {
             robot.outtake.outtakeMode = OuttakeMode.OFF;
         }
         if(gamepad2.right_trigger > 0.25) {
-            robot.outtake.outtakeMode = OuttakeMode.IDLE;
+            if(robot.outtake.outtakeMode == OuttakeMode.OFF) {
+                robot.outtake.outtakeMode = OuttakeMode.IDLE;
+            }
         }
         if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
             robot.intake.intakeMode = IntakeMode.IDLE;
@@ -246,10 +271,8 @@ public class TeleOPRed extends OpMode {
         DashboardUtil.drawRobot(fieldOverlay, robot.drive.getPoseEstimate());
 
         packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
-        packet.put("Mean250 sensor time", robot.buffer.avgSensorTime10.getMean() * 1000);
-        packet.put("Dev250 sensor time", robot.buffer.avgSensorTime10.getStandardDeviation() * 1000);
-        packet.put("Mean250 robot time", robot.top10.getMean() * 1000);
-        packet.put("Dev250 robot time", robot.top10.getStandardDeviation() * 1000);
+        packet.put("Mean Robot", robot.top100.getMean() * 1000);
+        packet.put("Stdev Robot", robot.top100.getStandardDeviation() * 1000);
         packet.put("Buffer rings", robot.buffer.getRingCount());
         packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
         packet.put("1 ring", 110);
@@ -265,6 +288,10 @@ public class TeleOPRed extends OpMode {
         packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
         packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
         packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
+        robot.top100Subsystems.forEach((subsystem, movingStatistics) -> {
+            packet.put("Mean " + subsystem.getClass().getSimpleName(), movingStatistics.getMean() * 1000);
+            packet.put("Stdev " + subsystem.getClass().getSimpleName(), movingStatistics.getStandardDeviation() * 1000);
+        });
 //        FtcDashboard.getInstance().sendTelemetryPacket(packet);
 //        telemetry.update();
     }

@@ -14,8 +14,10 @@ import java.util.Arrays;
 
 @Config
 public class DriveConstants {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(13, 0.4, 1.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.1, 0.6, 1);
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(13, 0.4, 1.5);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.1, 0.6, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0.05, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(1.5, 0.05, 0.5);
 
 //    public static PIDCoefficients TRANSLATIONAL_PID_TELEOP = new PIDCoefficients(15, 0.5, 2);
 //    public static PIDCoefficients HEADING_PID_TELEOP = new PIDCoefficients(15, 2, 0.5);

@@ -39,6 +39,6 @@ public class LEDStrip implements Subsystem {
         else if(turretOutOfRange)
             setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         else
-            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 }

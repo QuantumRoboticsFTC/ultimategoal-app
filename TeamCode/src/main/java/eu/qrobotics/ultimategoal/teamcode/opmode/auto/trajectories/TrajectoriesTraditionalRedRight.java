@@ -109,7 +109,7 @@ public class TrajectoriesTraditionalRedRight {
         // place first wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(12, -58, Math.toRadians(180)), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(41, -61), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(43, -61), Math.toRadians(0))
                 .build());
 
         // park

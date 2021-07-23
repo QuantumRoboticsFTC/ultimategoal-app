@@ -250,7 +250,12 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         switch (mode) {
             case IDLE:
                 if(isAutonomous) {
-                    setDriveSignal(follower.update(currentPose));
+                    DriveSignal driveSignal = follower.update(currentPose);
+                    setDriveSignal(driveSignal);
+                    packet.put("Target velocity", follower.getTrajectory().velocity(follower.getTrajectory().duration()).toString());
+                    packet.put("Target position", follower.getTrajectory().get(follower.getTrajectory().duration()).toString());
+                    packet.put("Drive vel", driveSignal.getVel().toString());
+                    packet.put("Drive accel", driveSignal.getAccel().toString());
                 }
                 else {
                     setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);

@@ -29,10 +29,8 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 @Config
 @Autonomous
 public class AutoTraditionalBlueLeft extends LinearOpMode {
-    //    public static Point TOP_LEFT = new Point(500, 250);
-//    public static Point BOTTOM_RIGHT = new Point(775, 500);
-    public static Point TOP_LEFT = new Point(1000, 400);
-    public static Point BOTTOM_RIGHT = new Point(1200, 625); // Camera
+    public static Point TOP_LEFT = new Point(975, 325);
+    public static Point BOTTOM_RIGHT = new Point(1225, 900); // Camera
 
 //    public static RingDetector.Stack RING_STACK = RingDetector.Stack.ZERO;
 
@@ -94,6 +92,9 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -126,6 +127,9 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // B
             robot.drive.followTrajectorySync(trajectoriesB.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -142,6 +146,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.sleep(0.2);
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(1));
@@ -162,6 +167,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.sleep(0.2);
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.intake.intakeMode = Intake.IntakeMode.IDLE;
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
 
             robot.drive.followTrajectorySync(trajectoriesB.get(2));
 
@@ -183,6 +189,9 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             // C
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
 
+            while(!robot.outtake.isReady() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
             robot.sleep(0.5);
 
             robot.buffer.bufferPusherMode = Buffer.BufferPusherMode.PUSH_ALL;
@@ -198,8 +207,6 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
-            robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
 
@@ -258,6 +265,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.outtake.outtakeMode = Outtake.OuttakeMode.OFF;
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
+            robot.intake.intakeMode = Intake.IntakeMode.IDLE;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(3));
 
@@ -272,7 +280,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.drive.followTrajectorySync(trajectoriesC.get(4));
         }
 
-        robot.sleep(0.2);
+        robot.sleep(30.0); // anti defence
 
         robot.stop();
     }
