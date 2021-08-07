@@ -225,7 +225,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
         updatePoseEstimate();
 
         Pose2d currentPose = getPoseEstimate();
-        Pose2d lastError = getLastError();
+//        Pose2d lastError = getLastError();
         autonomousEndPose = currentPose;
 
         poseHistory.add(currentPose);
@@ -234,28 +234,28 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             poseHistory.removeFirst();
         }
 
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
-
-        packet.put("mode", mode);
-
-        packet.put("x", currentPose.getX());
-        packet.put("y", currentPose.getY());
-        packet.put("heading (deg)", Math.toDegrees(currentPose.getHeading()));
-
-        packet.put("xError", lastError.getX());
-        packet.put("yError", lastError.getY());
-        packet.put("headingError (deg)", Math.toDegrees(lastError.getHeading()));
+//        TelemetryPacket packet = new TelemetryPacket();
+//        Canvas fieldOverlay = packet.fieldOverlay();
+//
+//        packet.put("mode", mode);
+//
+//        packet.put("x", currentPose.getX());
+//        packet.put("y", currentPose.getY());
+//        packet.put("heading (deg)", Math.toDegrees(currentPose.getHeading()));
+//
+//        packet.put("xError", lastError.getX());
+//        packet.put("yError", lastError.getY());
+//        packet.put("headingError (deg)", Math.toDegrees(lastError.getHeading()));
 
         switch (mode) {
             case IDLE:
                 if(isAutonomous) {
                     DriveSignal driveSignal = follower.update(currentPose);
                     setDriveSignal(driveSignal);
-                    packet.put("Target velocity", follower.getTrajectory().velocity(follower.getTrajectory().duration()).toString());
-                    packet.put("Target position", follower.getTrajectory().get(follower.getTrajectory().duration()).toString());
-                    packet.put("Drive vel", driveSignal.getVel().toString());
-                    packet.put("Drive accel", driveSignal.getAccel().toString());
+//                    packet.put("Target velocity", follower.getTrajectory().velocity(follower.getTrajectory().duration()).toString());
+//                    packet.put("Target position", follower.getTrajectory().get(follower.getTrajectory().duration()).toString());
+//                    packet.put("Drive vel", driveSignal.getVel().toString());
+//                    packet.put("Drive accel", driveSignal.getAccel().toString());
                 }
                 else {
                     setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
@@ -298,21 +298,21 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             }
         }
 
-        fieldOverlay.setStroke("#3F51B5");
-        DashboardUtil.drawRobot(fieldOverlay, currentPose);
-
-        fieldOverlay.setStroke("#000000");
-        fieldOverlay.fillCircle(robot.outtake.outtakeTarget.getPosition().getX(), robot.outtake.outtakeTarget.getPosition().getY(), 3);
-
-        packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
-        packet.put("Target RPM", robot.outtake.getTargetRPM());
-        packet.put("Current RPM", robot.outtake.getCurrentRPM());
-        packet.put("Target angle", robot.outtake.getTargetTurretAngle());
-        packet.put("Outtake target", robot.outtake.outtakeTarget);
+//        fieldOverlay.setStroke("#3F51B5");
+//        DashboardUtil.drawRobot(fieldOverlay, currentPose);
+//
+//        fieldOverlay.setStroke("#000000");
+//        fieldOverlay.fillCircle(robot.outtake.outtakeTarget.getPosition().getX(), robot.outtake.outtakeTarget.getPosition().getY(), 3);
+//
+//        packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
+//        packet.put("Target RPM", robot.outtake.getTargetRPM());
+//        packet.put("Current RPM", robot.outtake.getCurrentRPM());
+//        packet.put("Target angle", robot.outtake.getTargetTurretAngle());
+//        packet.put("Outtake target", robot.outtake.outtakeTarget);
 //        packet.put("Camera Pose2d", ((T265Odometry)getLocalizer()).getCameraUpdate().pose.toString());
 //        packet.put("Camera Speed", ((T265Odometry)getLocalizer()).getCameraUpdate().velocity.toString());
 //        packet.put("Camera Confidence", ((T265Odometry)getLocalizer()).getCameraUpdate().confidence);
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet);
     }
 
     @Override

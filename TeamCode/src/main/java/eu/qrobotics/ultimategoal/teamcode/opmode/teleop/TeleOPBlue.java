@@ -1,5 +1,7 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.teleop;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -142,15 +144,19 @@ public class TeleOPBlue extends OpMode {
 
         // region Driver 2 controls
 
-        if (gamepad2.left_stick_y < -0.1)
-            robot.intake.intakeMode = IntakeMode.IN;
+        if (gamepad2.left_stick_y < -0.1) {
+            if(gamepad2.left_stick_button)
+                robot.intake.intakeMode = IntakeMode.IN_SLOW;
+            else
+                robot.intake.intakeMode = IntakeMode.IN;
+        }
         else if (gamepad2.left_stick_y > 0.1) {
             if(gamepad2.left_stick_button)
                 robot.intake.intakeMode = IntakeMode.OUT;
             else
                 robot.intake.intakeMode = IntakeMode.OUT_SLOW;
         }
-        else if (robot.intake.intakeMode == IntakeMode.OUT_SLOW || robot.intake.intakeMode == IntakeMode.OUT)
+        else if (robot.intake.intakeMode == IntakeMode.OUT_SLOW || robot.intake.intakeMode == IntakeMode.OUT || robot.intake.intakeMode == IntakeMode.IN_SLOW)
             robot.intake.intakeMode = IntakeMode.IDLE;
 
         if (stickyGamepad2.a) {
@@ -162,6 +168,7 @@ public class TeleOPBlue extends OpMode {
         if(stickyGamepad2.b) {
             robot.buffer.bufferMode = BufferMode.OUTTAKE;
             robot.outtake.outtakeMode = OuttakeMode.ON;
+            robot.intake.intakeMode = IntakeMode.IN_SLOW;
             bufferUpTimer.reset();
         }
 
@@ -179,6 +186,8 @@ public class TeleOPBlue extends OpMode {
                 robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
             else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_3)
                 robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.MID_GOAL)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
         }
         if(stickyGamepad2.right_bumper) {
             if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.HIGH_GOAL)
@@ -187,6 +196,8 @@ public class TeleOPBlue extends OpMode {
                 robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
             else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_2)
                 robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
+            else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_3)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.MID_GOAL;
         }
         if(robot.buffer.bufferMode == BufferMode.COLLECT && (0.6 <= buffer2RingsTimer.seconds() && buffer2RingsTimer.seconds() <= 0.7)) {
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
@@ -230,10 +241,8 @@ public class TeleOPBlue extends OpMode {
                 robot.outtake.outtakeMode = OuttakeMode.IDLE;
             }
         }
-        if(stickyGamepad2.dpad_down) {
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
-        } else if (stickyGamepad2.dpad_up) {
-            robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+        if (bufferUpTimer.seconds() > 0.7 && bufferUpTimer.seconds() < 0.8) {
+            robot.intake.intakeMode = IntakeMode.IDLE;
         }
 
 //        if((0.6 <= buffer3RingsTimer.seconds() && buffer3RingsTimer.seconds() <= 0.7) && robot.intake.intakeMode == IntakeMode.IN) {
@@ -252,35 +261,46 @@ public class TeleOPBlue extends OpMode {
             buffer3RingsTimer.reset();
 
         TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
-
-        fieldOverlay.setStroke("#3F51B5");
-        DashboardUtil.drawRobot(fieldOverlay, robot.drive.getPoseEstimate());
-
-        packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
-        packet.put("Mean Robot", robot.top100.getMean() * 1000);
-        packet.put("Stdev Robot", robot.top100.getStandardDeviation() * 1000);
-        packet.put("Buffer rings", robot.buffer.getRingCount());
-        packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
-        packet.put("1 ring", 110);
-        packet.put("2 rings", 100);
-        packet.put("3 rings", 90);
-        packet.put("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
-        packet.put("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
-        packet.put("Outtake target", robot.outtake.outtakeTarget);
-        packet.put("Outtake target RPM", robot.outtake.getTargetRPM());
-        packet.put("Outtake current RPM", robot.outtake.getCurrentRPM());
-        packet.put("Outtake ready?", robot.outtake.isReady());
-        packet.put("Buffer pusher state", robot.buffer.getBufferPusherState());
-        packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
-        packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
-        packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
-        robot.top100Subsystems.forEach((subsystem, movingStatistics) -> {
-            packet.put("Mean " + subsystem.getClass().getSimpleName(), movingStatistics.getMean() * 1000);
-            packet.put("Stdev " + subsystem.getClass().getSimpleName(), movingStatistics.getStandardDeviation() * 1000);
-        });
+//        Canvas fieldOverlay = packet.fieldOverlay();
+//
+//        fieldOverlay.setStroke("#3F51B5");
+//        DashboardUtil.drawRobot(fieldOverlay, robot.drive.getPoseEstimate());
+//
+//        packet.put("Battery voltage", batteryVoltageSensor.getVoltage());
+//        packet.put("Mean Robot", robot.top100.getMean() * 1000);
+//        packet.put("Stdev Robot", robot.top100.getStandardDeviation() * 1000);
+//        packet.put("Buffer rings", robot.buffer.getRingCount());
+//        packet.put("Buffer current distance", robot.buffer.ringSensorValues.getMean() + robot.buffer.ringSensorValues.getStandardDeviation() / 2);
+//        packet.put("1 ring", 110);
+//        packet.put("2 rings", 100);
+//        packet.put("3 rings", 90);
+//        packet.put("Buffer distance mean", robot.buffer.ringSensorValues.getMean());
+//        packet.put("Buffer distance stdev", robot.buffer.ringSensorValues.getStandardDeviation());
+//        packet.put("Outtake target", robot.outtake.outtakeTarget);
+//        packet.put("Outtake target RPM", robot.outtake.getTargetRPM());
+//        packet.put("Outtake current RPM", robot.outtake.getCurrentRPM());
+//        packet.put("Outtake ready?", robot.outtake.isReady());
+//        packet.put("Buffer pusher state", robot.buffer.getBufferPusherState());
+//        packet.put("Buffer pusher mode", robot.buffer.bufferPusherMode);
+//        packet.put("Wobble Arm", robot.wobbleGoalGrabber.wobbleGoalArmMode);
+//        packet.put("Wobble Claw", robot.wobbleGoalGrabber.wobbleGoalClawMode);
+//        robot.top100Subsystems.forEach((subsystem, movingStatistics) -> {
+//            packet.put("Mean " + subsystem.getClass().getSimpleName(), movingStatistics.getMean() * 1000);
+//            packet.put("Stdev " + subsystem.getClass().getSimpleName(), movingStatistics.getStandardDeviation() * 1000);
+//        });
 //        FtcDashboard.getInstance().sendTelemetryPacket(packet);
-//        telemetry.update();
+        telemetry.addData("Buffer rings", robot.buffer.getRingCount());
+        telemetry.addData("Outtake target", robot.outtake.outtakeTarget);
+        telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
+        telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
+        telemetry.addData("Outtake ready?", robot.outtake.isReady());
+        telemetry.addData("Turret in range?", robot.outtake.isTurretInRange());
+        telemetry.addData("In launch zone?", robot.drive.getPoseEstimate().getX() <= 8);
+        telemetry.update();
+//        robot.top100Subsystems.forEach((subsystem, movingStatistics) -> {
+//            Log.d("RobotTimesMean" + subsystem.getClass().getSimpleName(), movingStatistics.getMean() * 1000 + "ms");
+//            Log.d("RobotTimesStdev" + subsystem.getClass().getSimpleName(),  movingStatistics.getStandardDeviation() * 1000 + "ms");
+//        });
     }
 
     @Override

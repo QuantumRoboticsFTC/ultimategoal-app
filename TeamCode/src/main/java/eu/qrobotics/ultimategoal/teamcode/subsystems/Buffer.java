@@ -198,7 +198,7 @@ public class Buffer implements Subsystem {
         double stdev = ringSensorValues.getStandardDeviation() / 2;
 
         double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 108) {
+        if(distance > 110) {
             return 0;
         }
         if(distance > 98) {

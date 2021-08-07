@@ -33,9 +33,9 @@ public class LEDStrip implements Subsystem {
         boolean turretOutOfRange = !robot.outtake.isTurretInRange();
 
         if(notInLaunchZone && turretOutOfRange)
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED); // LED strip broky
         else if(notInLaunchZone)
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+            setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED);
         else if(turretOutOfRange)
             setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         else

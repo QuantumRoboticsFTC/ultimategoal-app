@@ -29,6 +29,7 @@ public class Outtake implements Subsystem {
 
     public enum OuttakeTarget {
         HIGH_GOAL(new Vector2d(72, -36), new Vector2d(72, 36)),
+        MID_GOAL(new Vector2d(72, 36), new Vector2d(72, -36)),
         POWER_SHOT_1(new Vector2d(72, -20), new Vector2d(72, 22)),
         POWER_SHOT_2(new Vector2d(72, -12.5), new Vector2d(72, 14)),
         POWER_SHOT_3(new Vector2d(72, -5), new Vector2d(72, 6));
@@ -47,7 +48,7 @@ public class Outtake implements Subsystem {
     }
 
     private static double TICKS_PER_REV = 28;
-    private static double READY_RPM_THRESHOLD = 100;
+    private static double READY_RPM_THRESHOLD = 75;
 
     public static double TURRET_IDLE_POSITION = 0.5;
     public static double MIN_TURRET_POSITION = 0.15;
@@ -65,8 +66,10 @@ public class Outtake implements Subsystem {
         public double apply(double val) { return kA * val * val * val + kB * val * val + kC * val + kD; }
     }
 
-    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 14928.33);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25204.94);
+    public static Coefficients AUTO_HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 14928.33);
+    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 15028.33);
+    public static Coefficients MID_GOAL_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25154.94);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25254.94);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;
@@ -74,12 +77,14 @@ public class Outtake implements Subsystem {
     public double overrideRPM;
 
     private DcMotorEx outtakeMotor;
+    private boolean isAutonomous;
     private Servo turretServo;
 
     private Robot robot;
 
-    public Outtake(HardwareMap hardwareMap, Robot robot) {
+    public Outtake(HardwareMap hardwareMap, Robot robot, boolean isAutonomous) {
         this.robot = robot;
+        this.isAutonomous = isAutonomous;
 
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtakeMotor");
         outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -166,6 +171,12 @@ public class Outtake implements Subsystem {
         }
         if(outtakeTarget == OuttakeTarget.POWER_SHOT_1 || outtakeTarget == OuttakeTarget.POWER_SHOT_2 || outtakeTarget == OuttakeTarget.POWER_SHOT_3) {
             return POWER_SHOT_COEFFICIENTS.apply(getDistance());
+        }
+        if(outtakeTarget == OuttakeTarget.MID_GOAL) {
+            return MID_GOAL_COEFFICIENTS.apply(getDistance());
+        }
+        if(isAutonomous) {
+            return AUTO_HIGH_GOAL_COEFFICIENTS.apply(getDistance());
         }
         return HIGH_GOAL_COEFFICIENTS.apply(getDistance());
     }

@@ -119,7 +119,7 @@ public class Robot implements OpModeManagerNotifier.Notifications, GlobalWarning
         }
 
         try {
-            outtake = new Outtake(opMode.hardwareMap, this);
+            outtake = new Outtake(opMode.hardwareMap, this, isAutonomous);
             subsystems.add(outtake);
         } catch (Exception e) {
             Log.w(TAG, "skipping Outtake");
