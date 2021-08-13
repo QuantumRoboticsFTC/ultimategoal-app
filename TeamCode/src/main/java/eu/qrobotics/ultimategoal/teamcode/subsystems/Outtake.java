@@ -24,7 +24,7 @@ public class Outtake implements Subsystem {
 
     public enum TurretMode {
         ON,
-        OFF,
+        FORCED,
     }
 
     public enum OuttakeTarget {
@@ -50,7 +50,8 @@ public class Outtake implements Subsystem {
     private static double TICKS_PER_REV = 28;
     private static double READY_RPM_THRESHOLD = 75;
 
-    public static double TURRET_IDLE_POSITION = 0.5;
+    public static double TURRET_FORCE_RED_ANGLE = 0.1;
+    public static double TURRET_FORCE_BLUE_ANGLE = 0.05;
     public static double MIN_TURRET_POSITION = 0.15;
     public static double MAX_TURRET_POSITION = 0.8;
     public static double MIN_TURRET_ANGLE = Math.toRadians(-9.5);
@@ -134,8 +135,8 @@ public class Outtake implements Subsystem {
         }
         lastOuttakeMode = outtakeMode;
         switch (turretMode) {
-            case OFF:
-                turretServo.setPosition(TURRET_IDLE_POSITION);
+            case FORCED:
+                turretServo.setPosition(angleToTurretPosition(RED_ALLIANCE ? TURRET_FORCE_RED_ANGLE : TURRET_FORCE_BLUE_ANGLE));
                 break;
             case ON:
                 double targetTurretAngle = getTargetTurretAngle();
@@ -207,6 +208,8 @@ public class Outtake implements Subsystem {
     }
 
     public boolean isTurretInRange() {
+        if(turretMode == TurretMode.FORCED)
+            return true;
         double targetAngle = getTargetTurretAngle();
         return MIN_TURRET_ANGLE <= targetAngle && targetAngle <= MAX_TURRET_ANGLE;
     }

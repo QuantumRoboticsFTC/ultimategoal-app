@@ -91,9 +91,11 @@ public class TeleOPBlue extends OpMode {
             }
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, 63, 0));
+                robot.outtake.turretMode = Outtake.TurretMode.ON;
             }
             if(gamepad1.left_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(1, 63, 0));
+                robot.outtake.turretMode = Outtake.TurretMode.ON;
             }
         }
         else {
@@ -134,6 +136,14 @@ public class TeleOPBlue extends OpMode {
         if(stickyGamepad1.b) {
             // turn right to go left
             robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(1))));
+        }
+        if(stickyGamepad1.a) {
+            if(robot.outtake.turretMode == Outtake.TurretMode.ON) {
+                robot.outtake.turretMode = Outtake.TurretMode.FORCED;
+            }
+            else {
+                robot.outtake.turretMode = Outtake.TurretMode.ON;
+            }
         }
 
         if (wobbleGrabTimer.seconds() > 0.5 && wobbleGrabTimer.seconds() < 0.6) {

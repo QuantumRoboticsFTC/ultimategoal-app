@@ -149,7 +149,7 @@ public class Drivetrain extends MecanumDrive implements Subsystem {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new OdometryTwoWheel(hardwareMap));
+        setLocalizer(new Odometry(hardwareMap));
 
         setPoseEstimate(autonomousEndPose);
     }
