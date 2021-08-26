@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 public class Outtake implements Subsystem {
     private static final Vector2d OUTTAKE_ROBOT_POS = new Vector2d(0, -5.5);
     private static final double DEFAULT_IDLE_RPM = 3500;
+    public static final double MAX_RPM = 4000;
     private OuttakeMode lastOuttakeMode;
 
     public enum OuttakeMode {
@@ -30,9 +31,9 @@ public class Outtake implements Subsystem {
     public enum OuttakeTarget {
         HIGH_GOAL(new Vector2d(72, -36), new Vector2d(72, 36)),
         MID_GOAL(new Vector2d(72, 36), new Vector2d(72, -36)),
-        POWER_SHOT_1(new Vector2d(72, -20), new Vector2d(72, 22)),
-        POWER_SHOT_2(new Vector2d(72, -12.5), new Vector2d(72, 14)),
-        POWER_SHOT_3(new Vector2d(72, -5), new Vector2d(72, 6));
+        POWER_SHOT_1(new Vector2d(72, -20), new Vector2d(72, 18)),
+        POWER_SHOT_2(new Vector2d(72, -12.5), new Vector2d(72, 10.5)),
+        POWER_SHOT_3(new Vector2d(72, -5), new Vector2d(72, 3));
 
         Vector2d redPosition;
         Vector2d bluePosition;
@@ -75,6 +76,7 @@ public class Outtake implements Subsystem {
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;
     public TurretMode turretMode;
+    public double rpmOffset;
     public double overrideRPM;
 
     private DcMotorEx outtakeMotor;
@@ -156,7 +158,7 @@ public class Outtake implements Subsystem {
     }
 
     double getTargetTicks() {
-        return getTargetRPM() * TICKS_PER_REV / 60;
+        return Math.round(getTargetRPM() / 60 * TICKS_PER_REV);
     }
 
     public double getDistance() {
@@ -171,15 +173,15 @@ public class Outtake implements Subsystem {
             return overrideRPM;
         }
         if(outtakeTarget == OuttakeTarget.POWER_SHOT_1 || outtakeTarget == OuttakeTarget.POWER_SHOT_2 || outtakeTarget == OuttakeTarget.POWER_SHOT_3) {
-            return POWER_SHOT_COEFFICIENTS.apply(getDistance());
+            return Math.min(POWER_SHOT_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
         }
         if(outtakeTarget == OuttakeTarget.MID_GOAL) {
-            return MID_GOAL_COEFFICIENTS.apply(getDistance());
+            return Math.min(MID_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
         }
         if(isAutonomous) {
-            return AUTO_HIGH_GOAL_COEFFICIENTS.apply(getDistance());
+            return Math.min(AUTO_HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
         }
-        return HIGH_GOAL_COEFFICIENTS.apply(getDistance());
+        return Math.min(HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
     }
 
     public double getCurrentRPM() {

@@ -110,10 +110,12 @@ public class TeleOPBlue extends OpMode {
             if(gamepad1.right_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(-63, 63, 0));
                 robot.outtake.turretMode = Outtake.TurretMode.ON;
+                robot.outtake.rpmOffset = 0;
             }
             if(gamepad1.left_trigger > 0.25) {
                 robot.drive.setPoseEstimate(new Pose2d(1, 63, 0));
                 robot.outtake.turretMode = Outtake.TurretMode.ON;
+                robot.outtake.rpmOffset = 0;
             }
             if(stickyGamepad1.y) {
                 autoPowershotsTimer.reset();
@@ -237,16 +239,10 @@ public class TeleOPBlue extends OpMode {
         }
         if(gamepad2.right_trigger > 0.25) {
             if(stickyGamepad2.dpad_up) {
-                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(1, 0, 0)));
+                robot.outtake.rpmOffset += 10;
             }
             if(stickyGamepad2.dpad_down) {
-                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(-1, 0, 0)));
-            }
-            if(stickyGamepad2.dpad_left) {
-                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, 1, 0)));
-            }
-            if(stickyGamepad2.dpad_right) {
-                robot.drive.setPoseEstimate(robot.drive.getPoseEstimate().plus(new Pose2d(0, -1, 0)));
+                robot.outtake.rpmOffset -= 10;
             }
         }
         else {
