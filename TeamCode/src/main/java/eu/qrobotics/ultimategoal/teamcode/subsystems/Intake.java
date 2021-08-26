@@ -58,7 +58,7 @@ public class Intake implements Subsystem {
     @Override
     public void update() {
         if(IS_DISABLED) return;
-        if(robot.buffer.bufferMode != Buffer.BufferMode.COLLECT && intakeMode == IntakeMode.IN) {
+        if(robot.buffer.bufferMode == Buffer.BufferMode.OUTTAKE && intakeMode == IntakeMode.IN) {
             intakeMode = IntakeMode.IDLE;
         }
         if(lastIntakeMode != intakeMode) {
