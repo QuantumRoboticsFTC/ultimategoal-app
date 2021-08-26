@@ -71,11 +71,27 @@ public class TeleOPBlue extends OpMode {
     private ElapsedTime bufferUpTimer = new ElapsedTime();
     private ElapsedTime buffer2RingsTimer = new ElapsedTime();
     private ElapsedTime buffer3RingsTimer = new ElapsedTime();
+    private ElapsedTime autoPowershotsTimer = new ElapsedTime(0);
     private double offsetAngle = 0.0;
     @Override
     public void loop() {
         stickyGamepad1.update();
         stickyGamepad2.update();
+
+        if(autoPowershotsTimer.seconds() < 5) {
+            if(autoPowershotsTimer.seconds() < 0.5 && !robot.outtake.isReady())
+                autoPowershotsTimer.reset();
+            if(1 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 1.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+            if(1.5 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 1.6)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
+            if(2 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 2.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+            if(2.5 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 2.6)
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_3;
+            if(3 < autoPowershotsTimer.seconds() && autoPowershotsTimer.seconds() < 3.1)
+                robot.buffer.bufferPusherMode = BufferPusherMode.PUSH_SINGLE;
+        }
 
         //region Driver 1 controls
 
@@ -99,10 +115,11 @@ public class TeleOPBlue extends OpMode {
                 robot.drive.setPoseEstimate(new Pose2d(1, 63, 0));
                 robot.outtake.turretMode = Outtake.TurretMode.ON;
             }
-        }
-        else {
             if(stickyGamepad1.y) {
-                robot.drive.cancelTrajectory();
+                autoPowershotsTimer.reset();
+                robot.buffer.bufferMode = BufferMode.OUTTAKE;
+                robot.outtake.outtakeMode = OuttakeMode.ON;
+                robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_1;
             }
         }
         if (stickyGamepad1.left_bumper) {
