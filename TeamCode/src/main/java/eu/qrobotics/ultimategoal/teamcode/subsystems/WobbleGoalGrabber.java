@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoalGrabber implements Subsystem {
     public enum WobbleGoalArmMode {
         DOWN,
+        WALL,
         UP,
         INITIAL,
     }
@@ -15,14 +16,17 @@ public class WobbleGoalGrabber implements Subsystem {
     public enum WobbleGoalClawMode {
         OPEN,
         CLOSE,
+        INITIAL,
     }
 
     public static double ARM_DOWN_POSITION = 0;
+    public static double ARM_WALL_POSITION = 0.44;
     public static double ARM_UP_POSITION = 0.55;
     public static double ARM_INITIAL_POSITION = 0.7;
 
     public static double CLAW_OPEN_POSITION = 0.25;
     public static double CLAW_CLOSE_POSITION = 0.62;
+    public static double CLAW_INITIAL_POSITION = 0.45;
 
     public WobbleGoalArmMode wobbleGoalArmMode;
     public WobbleGoalClawMode wobbleGoalClawMode;
@@ -47,6 +51,9 @@ public class WobbleGoalGrabber implements Subsystem {
             case DOWN:
                 wobbleGoalArmServo.setPosition(ARM_DOWN_POSITION);
                 break;
+            case WALL:
+                wobbleGoalArmServo.setPosition(ARM_WALL_POSITION);
+                break;
             case UP:
                 wobbleGoalArmServo.setPosition(ARM_UP_POSITION);
                 break;
@@ -61,6 +68,9 @@ public class WobbleGoalGrabber implements Subsystem {
                 break;
             case CLOSE:
                 wobbleGoalClawServo.setPosition(CLAW_CLOSE_POSITION);
+                break;
+            case INITIAL:
+                wobbleGoalClawServo.setPosition(CLAW_INITIAL_POSITION);
                 break;
         }
     }

@@ -51,6 +51,8 @@ public class TeleOPBlue extends OpMode {
         robot = new Robot(this, false);
 //        robot.drive.fieldCentric = true;
         robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+        robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.INITIAL;
+        robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.CLOSE;
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
         driveMode = DriveMode.NORMAL;
@@ -115,6 +117,7 @@ public class TeleOPBlue extends OpMode {
             wobbleGrabTimer.reset();
         }
         if (stickyGamepad1.dpad_right) {
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalArmMode.WALL;
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalClawMode.OPEN;
         }
         if (stickyGamepad1.dpad_down) {
