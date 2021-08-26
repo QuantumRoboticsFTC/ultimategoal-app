@@ -29,16 +29,36 @@ public class LEDStrip implements Subsystem {
     public void update() {
         if(IS_DISABLED) return;
 
-        boolean notInLaunchZone = robot.drive.getPoseEstimate().getX() > 8;
         boolean turretOutOfRange = !robot.outtake.isTurretInRange();
+        int ringCount = robot.buffer.getRingCount();
 
-        if(notInLaunchZone && turretOutOfRange)
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-        else if(notInLaunchZone)
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-        else if(turretOutOfRange)
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        else
-            setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        if(turretOutOfRange) {
+            if(ringCount == 0) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+            }
+            else if(ringCount == 1) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+            }
+            else if(ringCount == 2) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+            }
+            else if(ringCount == 3) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_RED);
+            }
+        }
+        else {
+            if(ringCount == 0) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.SKY_BLUE);
+            }
+            else if(ringCount == 1) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
+            }
+            else if(ringCount == 2) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
+            }
+            else if(ringCount == 3) {
+                setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            }
+        }
     }
 }
