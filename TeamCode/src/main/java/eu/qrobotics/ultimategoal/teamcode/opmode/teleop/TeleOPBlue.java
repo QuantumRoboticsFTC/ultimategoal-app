@@ -200,7 +200,6 @@ public class TeleOPBlue extends OpMode {
         if(stickyGamepad2.b) {
             robot.buffer.bufferMode = BufferMode.OUTTAKE;
             robot.outtake.outtakeMode = OuttakeMode.ON;
-            robot.intake.intakeMode = IntakeMode.IN_SLOW;
             bufferUpTimer.reset();
         }
 
