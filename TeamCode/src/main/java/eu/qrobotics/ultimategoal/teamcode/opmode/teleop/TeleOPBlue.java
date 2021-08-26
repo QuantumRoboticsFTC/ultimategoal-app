@@ -1,13 +1,9 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.teleop;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -23,7 +19,6 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.RingStopper;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalArmMode;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber.WobbleGoalClawMode;
-import eu.qrobotics.ultimategoal.teamcode.util.DashboardUtil;
 import eu.qrobotics.ultimategoal.teamcode.util.StickyGamepad;
 
 @TeleOp
@@ -245,19 +240,30 @@ public class TeleOPBlue extends OpMode {
             }
         }
         else {
-            if (gamepad2.dpad_up) {
-                robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.UP;
+            if (stickyGamepad2.dpad_up) {
+                switch (robot.intake.intakeStopperMode) {
+                    case DOWN:
+                        robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
+                        break;
+                    case MID:
+                        robot.scoringBlocker.moveOut();
+                        robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+                        break;
+                }
             }
-            if (gamepad2.dpad_down) {
-                robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
-            }
-            if (gamepad2.dpad_left) {
-                robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
-            }
-            if (gamepad2.dpad_right) {
-                robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+            if (stickyGamepad2.dpad_down) {
+                switch (robot.intake.intakeStopperMode) {
+                    case UP:
+                        robot.scoringBlocker.moveOut();
+                        robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
+                        break;
+                    case MID:
+                        robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+                        break;
+                }
             }
         }
+        robot.scoringBlocker.blockerPosition += gamepad2.right_stick_x * (gamepad2.right_stick_button ? 0.02 : 0.005);
         if(gamepad2.left_trigger > 0.25) {
             robot.outtake.outtakeMode = OuttakeMode.OFF;
         }
@@ -316,6 +322,8 @@ public class TeleOPBlue extends OpMode {
 //        FtcDashboard.getInstance().sendTelemetryPacket(packet);
         telemetry.addData("Buffer rings", robot.buffer.getRingCount());
         telemetry.addData("Outtake target", robot.outtake.outtakeTarget);
+        telemetry.addData("Outtake target angle", Math.toDegrees(robot.outtake.getTargetTurretAngle()));
+        telemetry.addData("Outtake target position", robot.outtake.getTargetTurretPosition());
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
         telemetry.addData("Outtake ready?", robot.outtake.isReady());
