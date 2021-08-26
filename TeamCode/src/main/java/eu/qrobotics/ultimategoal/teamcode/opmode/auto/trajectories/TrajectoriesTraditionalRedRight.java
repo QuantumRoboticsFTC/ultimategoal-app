@@ -43,7 +43,7 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-10, -57, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(-10, -57, Math.toRadians(10)), 0)
                 .build());
 
         // place first wobble
@@ -51,9 +51,14 @@ public class TrajectoriesTraditionalRedRight {
                 .splineToSplineHeading(new Pose2d(4, -60, Math.toRadians(-180)), Math.toRadians(0))
                 .build());
 
-        // park
+        // make space
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(0, -60), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-24, -60), Math.toRadians(180))
+                .build());
+
+        // park
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-2, -60), Math.toRadians(0))
                 .build());
 
         return trajectories;
@@ -64,7 +69,7 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToConstantHeading(new Vector2d(-10, -57), 0)
+                .splineToSplineHeading(new Pose2d(-10, -57, Math.toRadians(10)), 0)
                 .build());
 
         // collect 1 Ring
@@ -92,7 +97,7 @@ public class TrajectoriesTraditionalRedRight {
 
         // high goal
         trajectories.add(makeTrajectoryBuilder(trajectories, 0, POWERSHOT_VEL_CONSTRAINT, POWERSHOT_ACCEL_CONSTRAINT)
-                .splineToConstantHeading(new Vector2d(-10, -57), 0)
+                .splineToSplineHeading(new Pose2d(-10, -57, Math.toRadians(10)), 0)
                 .build());
 
         // collect 2 Rings

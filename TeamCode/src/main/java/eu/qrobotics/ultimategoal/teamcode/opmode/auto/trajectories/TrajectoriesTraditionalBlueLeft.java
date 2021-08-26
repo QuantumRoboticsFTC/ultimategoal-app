@@ -51,9 +51,14 @@ public class TrajectoriesTraditionalBlueLeft {
                 .splineToSplineHeading(new Pose2d(0, 56, Math.toRadians(-135)), Math.toRadians(0))
                 .build());
 
-        // park
+        // make space
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-4, 56), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-24, 54, Math.toRadians(90)), Math.toRadians(180))
+                .build());
+
+        // park
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-4, 56), Math.toRadians(0))
                 .build());
 
         return trajectories;

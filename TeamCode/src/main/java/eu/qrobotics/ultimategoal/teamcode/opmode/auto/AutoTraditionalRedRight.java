@@ -22,6 +22,7 @@ import eu.qrobotics.ultimategoal.teamcode.subsystems.Intake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Outtake;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.RingStopper;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.Robot;
+import eu.qrobotics.ultimategoal.teamcode.subsystems.ScoringBlocker;
 import eu.qrobotics.ultimategoal.teamcode.subsystems.WobbleGoalGrabber;
 
 @Config
@@ -40,6 +41,7 @@ public class AutoTraditionalRedRight extends LinearOpMode {
         Outtake.RED_ALLIANCE = true;
 //        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot robot = new Robot(this, true);
+        robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.INITIAL;
         robot.drive.setPoseEstimate(TrajectoriesTraditionalRedRight.START_POSE);
         List<Trajectory> trajectoriesA = TrajectoriesTraditionalRedRight.getTrajectoriesA();
         List<Trajectory> trajectoriesB = TrajectoriesTraditionalRedRight.getTrajectoriesB();
@@ -83,13 +85,14 @@ public class AutoTraditionalRedRight extends LinearOpMode {
 
         robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
         robot.outtake.outtakeMode = Outtake.OuttakeMode.ON;
-        robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
-        robot.intake.intakeMode = Intake.IntakeMode.IN_SLOW;
+        robot.intake.intakeMode = Intake.IntakeMode.IN;
         robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.DOWN;
 
         if(ringStack == RingDetector.Stack.ZERO) {
             // A
             robot.drive.followTrajectorySync(trajectoriesA.get(0));
+
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
 
             while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
@@ -113,18 +116,29 @@ public class AutoTraditionalRedRight extends LinearOpMode {
 
             robot.drive.followTrajectorySync(trajectoriesA.get(1));
 
+            robot.scoringBlocker.moveOut();
+            robot.sleep(0.1);
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.MID;
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.DOWN;
             robot.sleep(0.6);
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
+            robot.scoringBlocker.moveIn();
 
             robot.drive.followTrajectorySync(trajectoriesA.get(2));
+
+            robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.INITIAL;
+            robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.CLOSE;
+            robot.sleep(10);
+            robot.scoringBlocker.blockerPosition = 0.75;
+
+            robot.drive.followTrajectorySync(trajectoriesA.get(3));
         }
         else if(ringStack == RingDetector.Stack.ONE) {
             // B
             robot.drive.followTrajectorySync(trajectoriesB.get(0));
+
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
 
             while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
@@ -148,7 +162,18 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.intake.intakeMode = Intake.IntakeMode.IN;
             robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
 
-            robot.drive.followTrajectorySync(trajectoriesB.get(1));
+            robot.drive.followTrajectory(trajectoriesB.get(1));
+
+            robot.sleep(1.5);
+            robot.scoringBlocker.moveOut();
+            robot.sleep(0.1);
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+
+            while (robot.drive.isBusy() && !isStopRequested()) {
+                robot.sleep(0.05);
+            }
+
+            robot.scoringBlocker.moveIn();
 
             robot.sleep(2.0);
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
@@ -176,7 +201,6 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
             robot.buffer.bufferMode = Buffer.BufferMode.COLLECT;
             robot.outtake.outtakeTarget = Outtake.OuttakeTarget.HIGH_GOAL;
@@ -186,6 +210,8 @@ public class AutoTraditionalRedRight extends LinearOpMode {
         else if(ringStack == RingDetector.Stack.FOUR) {
             // C
             robot.drive.followTrajectorySync(trajectoriesC.get(0));
+
+            robot.buffer.bufferMode = Buffer.BufferMode.OUTTAKE;
 
             while(!robot.outtake.isReady() && !isStopRequested()) {
                 robot.sleep(0.05);
@@ -208,15 +234,21 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
             robot.ringStopper.ringStopperMode = RingStopper.RingStopperMode.INITIAL;
             robot.intake.intakeMode = Intake.IntakeMode.IN;
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
 
             robot.drive.followTrajectory(trajectoriesC.get(1));
 
-            while(robot.drive.isBusy()) {
+            robot.sleep(1.5);
+            robot.scoringBlocker.moveOut();
+            robot.sleep(0.1);
+            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.DOWN;
+
+            while(robot.drive.isBusy() && !isStopRequested()) {
                 if(robot.buffer.getRingCount() >= 3) {
                     robot.intake.intakeMode = Intake.IntakeMode.OUT_SLOW;
                 }
+                robot.sleep(0.05);
             }
+            robot.scoringBlocker.moveIn();
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
                 robot.sleep(1.0);
@@ -275,7 +307,6 @@ public class AutoTraditionalRedRight extends LinearOpMode {
             robot.wobbleGoalGrabber.wobbleGoalClawMode = WobbleGoalGrabber.WobbleGoalClawMode.OPEN;
             robot.sleep(0.2);
             robot.wobbleGoalGrabber.wobbleGoalArmMode = WobbleGoalGrabber.WobbleGoalArmMode.UP;
-            robot.intake.intakeStopperMode = Intake.IntakeStopperMode.UP;
 
             robot.drive.followTrajectorySync(trajectoriesC.get(4));
         }
