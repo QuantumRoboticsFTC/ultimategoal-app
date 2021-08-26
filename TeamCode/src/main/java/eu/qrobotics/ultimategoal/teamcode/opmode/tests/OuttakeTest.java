@@ -1,5 +1,7 @@
 package eu.qrobotics.ultimategoal.teamcode.opmode.tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -18,6 +20,7 @@ public class OuttakeTest extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), super.telemetry);
         robot = new Robot(this, false);
         stickyGamepad1 = new StickyGamepad(gamepad1);
         telemetry.log().add("Ready!");
@@ -72,6 +75,7 @@ public class OuttakeTest extends OpMode {
             else if(robot.outtake.outtakeTarget == Outtake.OuttakeTarget.POWER_SHOT_3)
                 robot.outtake.outtakeTarget = Outtake.OuttakeTarget.POWER_SHOT_2;
         }
+        robot.drive.setMotorPowersFromGamepad(gamepad1, 0.5);
         telemetry.addData("Outtake current RPM", robot.outtake.getCurrentRPM());
         telemetry.addData("Outtake target RPM", robot.outtake.getTargetRPM());
         telemetry.addData("Robot location", robot.drive.getPoseEstimate());

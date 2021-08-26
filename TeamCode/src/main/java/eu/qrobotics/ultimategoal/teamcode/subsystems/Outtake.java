@@ -53,13 +53,14 @@ public class Outtake implements Subsystem {
 
     public static double TURRET_FORCE_RED_ANGLE = 0.1;
     public static double TURRET_FORCE_BLUE_ANGLE = 0.05;
-    public static double MIN_TURRET_POSITION = 0.15;
+    public static double MIN_TURRET_POSITION = 0.18;
     public static double MAX_TURRET_POSITION = 0.8;
     public static double MIN_TURRET_ANGLE = Math.toRadians(-9.5);
     public static double MAX_TURRET_ANGLE = Math.toRadians(18.4);
 
     public static boolean RED_ALLIANCE = true;
-    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(600, 10, 100, 15);
+//    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(600, 10, 100, 15);
+    public static PIDFCoefficients OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(300, 8, 10, 13);
     public static PIDFCoefficients PREV_OUTTAKE_PIDF_COEFFICIENTS = new PIDFCoefficients(OUTTAKE_PIDF_COEFFICIENTS);
 
     private static class Coefficients {
@@ -68,10 +69,10 @@ public class Outtake implements Subsystem {
         public double apply(double val) { return kA * val * val * val + kB * val * val + kC * val + kD; }
     }
 
-    public static Coefficients AUTO_HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 14928.33);
-    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.0103352, 3.361013, -352.4242, 15028.33);
-    public static Coefficients MID_GOAL_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25154.94);
-    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.03278689, 8.821494, -780.1676, 25254.94);
+    public static Coefficients AUTO_HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.003196226, 1.076639, -118.6705, 7239.618);
+    public static Coefficients HIGH_GOAL_COEFFICIENTS = new Coefficients(-0.003196226, 1.076639, -118.6705, 7239.618);
+    public static Coefficients MID_GOAL_COEFFICIENTS = new Coefficients(-0.02263642, 5.838198, -491.6129, 15947.71);
+    public static Coefficients POWER_SHOT_COEFFICIENTS = new Coefficients(-0.02263642, 5.838198, -491.6129, 16147.71);
 
     public OuttakeMode outtakeMode;
     public OuttakeTarget outtakeTarget;
@@ -144,7 +145,7 @@ public class Outtake implements Subsystem {
                 double targetTurretAngle = getTargetTurretAngle();
                 if(-Math.PI / 2 < targetTurretAngle && targetTurretAngle < Math.PI / 2) {
                     double targetPosition = angleToTurretPosition(targetTurretAngle);
-                    if(Math.abs(lastTurretPosition - targetPosition) > 0.02) {
+                    if(Math.abs(lastTurretPosition - targetPosition) > 0.01) {
                         turretServo.setPosition(targetPosition);
                         lastTurretPosition = targetPosition;
                     }
