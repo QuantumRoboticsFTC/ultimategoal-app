@@ -32,14 +32,15 @@ public class Buffer implements Subsystem {
         RETRACTING,
     }
 
-    public static double BUFFER_DOWN_POSITION = 0.97;
-    public static double BUFFER_RING1_POSITION = 0.97;
-    public static double BUFFER_RING2_POSITION = 0.97;
-    public static double BUFFER_RING3_POSITION = 0.97;
-    public static double BUFFER_OUTTAKE_POSITION = 0.865;
+    public static double BUFFER_DOWN_POSITION = 0.94;
+    public static double BUFFER_RING1_POSITION = 0.94;
+    public static double BUFFER_RING2_POSITION = 0.94;
+    public static double BUFFER_RING3_POSITION = 0.94;
+    public static double BUFFER_OUTTAKE_POSITION = 0.82;
 
     public static double BUFFER_PUSHER_IDLE_POSITION = 0.575;
-    public static double BUFFER_PUSHER_PUSH_POSITION = 0.7 ;
+    public static double BUFFER_PUSHER_PUSH_POSITION = 0.72;
+    public static double BUFFER_PUSHER_MORE_PUSH_POSITION = 0.8;
 
     public BufferMode bufferMode;
     public BufferPusherMode bufferPusherMode;
@@ -147,6 +148,10 @@ public class Buffer implements Subsystem {
 
         switch (bufferPusherMode) {
             case PUSH_SINGLE:
+                if(bufferPusherState == BufferPusherState.IDLE && bufferUpTimer.seconds() > 0.5) {
+                    push();
+                }
+                break;
             case PUSH_ALL:
                 if(bufferPusherState == BufferPusherState.IDLE && bufferUpTimer.seconds() > 0.5 && robot.outtake.isReady()) {
                     push();
@@ -161,14 +166,19 @@ public class Buffer implements Subsystem {
                 bufferPusherServo.setPosition(BUFFER_PUSHER_IDLE_POSITION);
                 break;
             case PUSHING:
-                bufferPusherServo.setPosition(BUFFER_PUSHER_PUSH_POSITION);
-                if (bufferPushTime.seconds() > 0.1) {
+                if(bufferPusherMode == BufferPusherMode.PUSH_SINGLE) {
+                    bufferPusherServo.setPosition(BUFFER_PUSHER_MORE_PUSH_POSITION);
+                }
+                else {
+                    bufferPusherServo.setPosition(BUFFER_PUSHER_PUSH_POSITION);
+                }
+                if (bufferPushTime.seconds() > 0.15) {
                     bufferPusherState = BufferPusherState.RETRACTING;
                 }
                 break;
             case RETRACTING:
                 bufferPusherServo.setPosition(BUFFER_PUSHER_IDLE_POSITION);
-                if (bufferPushTime.seconds() > 0.1 * 2) {
+                if (bufferPushTime.seconds() > 0.15 * 2) {
                     bufferPusherState = BufferPusherState.IDLE;
 
                     pushAttempts++;
@@ -198,7 +208,7 @@ public class Buffer implements Subsystem {
         double stdev = ringSensorValues.getStandardDeviation() / 2;
 
         double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 110) {
+        if(distance > 108) {
             return 0;
         }
         if(distance > 98) {
