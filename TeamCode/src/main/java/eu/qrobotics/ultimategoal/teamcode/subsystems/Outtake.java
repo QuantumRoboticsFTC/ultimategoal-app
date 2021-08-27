@@ -174,15 +174,19 @@ public class Outtake implements Subsystem {
             return overrideRPM;
         }
         if(outtakeTarget == OuttakeTarget.POWER_SHOT_1 || outtakeTarget == OuttakeTarget.POWER_SHOT_2 || outtakeTarget == OuttakeTarget.POWER_SHOT_3) {
-            return Math.min(POWER_SHOT_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
+            return Math.min(POWER_SHOT_COEFFICIENTS.apply(getDistance()) + getTurretOffsetRPM() + rpmOffset, MAX_RPM);
         }
         if(outtakeTarget == OuttakeTarget.MID_GOAL) {
-            return Math.min(MID_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
+            return Math.min(MID_GOAL_COEFFICIENTS.apply(getDistance()) + getTurretOffsetRPM() + rpmOffset, MAX_RPM);
         }
         if(isAutonomous) {
-            return Math.min(AUTO_HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
+            return Math.min(AUTO_HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + getTurretOffsetRPM() + rpmOffset, MAX_RPM);
         }
-        return Math.min(HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + rpmOffset, MAX_RPM);
+        return Math.min(HIGH_GOAL_COEFFICIENTS.apply(getDistance()) + getTurretOffsetRPM() + rpmOffset, MAX_RPM);
+    }
+
+    public double getTurretOffsetRPM() {
+        return Math.toDegrees(Math.max(0, getTargetTurretAngle())) / 10 * 20;
     }
 
     public double getCurrentRPM() {
