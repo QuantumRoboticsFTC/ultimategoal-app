@@ -110,6 +110,11 @@ public class TeleOPRed extends OpMode {
                 robot.outtake.turretMode = Outtake.TurretMode.ON;
                 robot.outtake.rpmOffset = 0;
             }
+            if(gamepad1.back) {
+                robot.drive.setPoseEstimate(new Pose2d(-63, -17, Math.toRadians(0)));
+                robot.outtake.turretMode = Outtake.TurretMode.ON;
+                robot.outtake.rpmOffset = 0;
+            }
             if(stickyGamepad1.y) {
                 autoPowershotsTimer.reset();
                 robot.buffer.bufferMode = BufferMode.OUTTAKE;
