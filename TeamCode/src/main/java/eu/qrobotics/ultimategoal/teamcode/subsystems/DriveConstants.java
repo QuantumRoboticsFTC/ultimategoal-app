@@ -38,17 +38,20 @@ public class DriveConstants {
     public static double MAX_VEL = 60;
     public static double MAX_ACCEL = 40;
 
-    public static TrajectoryVelocityConstraint AUTOAIM_VEL_CONSTRAINT = new MecanumVelocityConstraint(80,TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryVelocityConstraint AUTOAIM_VEL_CONSTRAINT = new MecanumVelocityConstraint(80, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint AUTOAIM_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(200);
 
     public static TrajectoryVelocityConstraint BASE_VEL_CONSTRAINT = new MecanumVelocityConstraint(30, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint BASE_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(60);
 
-    public static TrajectoryVelocityConstraint MEDIUM_VEL_CONSTRAINT = new MecanumVelocityConstraint(35,TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryVelocityConstraint MEDIUM_VEL_CONSTRAINT = new MecanumVelocityConstraint(35, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint MEDIUM_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(75);
 
-    public static TrajectoryVelocityConstraint FAST_VEL_CONSTRAINT = new MecanumVelocityConstraint(40,TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryVelocityConstraint FAST_VEL_CONSTRAINT = new MecanumVelocityConstraint(40, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint FAST_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(90);
+
+    public static TrajectoryVelocityConstraint FASTER_VEL_CONSTRAINT = new MecanumVelocityConstraint(60, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
+    public static TrajectoryAccelerationConstraint FASTER_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(100);
 
     public static TrajectoryVelocityConstraint SLOW_VEL_CONSTRAINT = new MecanumVelocityConstraint(2.5, TRACK_WIDTH, WHEEL_BASE, LATERAL_MULTIPLIER);
     public static TrajectoryAccelerationConstraint SLOW_ACCEL_CONSTRAINT = new ProfileAccelerationConstraint(20);
