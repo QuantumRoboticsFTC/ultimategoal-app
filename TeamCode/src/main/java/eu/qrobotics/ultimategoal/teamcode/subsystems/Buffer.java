@@ -203,18 +203,21 @@ public class Buffer implements Subsystem {
         }
     }
 
-    public int getRingCount() {
+    public double getSensorValues() {
         double mean = ringSensorValues.getMean();
         double stdev = ringSensorValues.getStandardDeviation() / 2;
+        return mean + (Double.isNaN(stdev) ? 0 : stdev);
+    }
 
-        double distance = mean + (Double.isNaN(stdev) ? 0 : stdev);
-        if(distance > 108) {
+    public int getRingCount() {
+        double distance = getSensorValues();
+        if(distance > 105) {
             return 0;
         }
-        if(distance > 98) {
+        if(distance > 93) {
             return 1;
         }
-        if(distance > 85) {
+        if(distance > 82) {
             return 2;
         }
         return 3;
