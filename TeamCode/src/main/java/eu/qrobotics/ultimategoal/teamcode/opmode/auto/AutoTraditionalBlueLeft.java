@@ -269,7 +269,7 @@ public class AutoTraditionalBlueLeft extends LinearOpMode {
             robot.drive.followTrajectory(trajectoriesC.get(2));
 
             if(robot.intake.intakeMode == Intake.IntakeMode.IN) {
-                robot.sleep(3);
+                robot.sleep(5);
             }
             robot.intake.intakeMode = Intake.IntakeMode.OUT;
             robot.sleep(0.3);
