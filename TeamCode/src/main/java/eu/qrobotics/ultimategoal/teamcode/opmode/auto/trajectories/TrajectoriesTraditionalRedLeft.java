@@ -62,7 +62,7 @@ public class TrajectoriesTraditionalRedLeft {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(10, -15, Math.toRadians(0)))
                 .build());
 
         return trajectories;
@@ -90,8 +90,8 @@ public class TrajectoriesTraditionalRedLeft {
                 .build());
 
         // park
-        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0), PARK_VEL_CONSTRAINT, PARK_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(0))
+        trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(10, -15, Math.toRadians(0)))
                 .build());
 
         return trajectories;
@@ -121,7 +121,7 @@ public class TrajectoriesTraditionalRedLeft {
 
         // park
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(10, -15, Math.toRadians(180)), Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(10, -15, Math.toRadians(0)))
                 .build());
 
         return trajectories;

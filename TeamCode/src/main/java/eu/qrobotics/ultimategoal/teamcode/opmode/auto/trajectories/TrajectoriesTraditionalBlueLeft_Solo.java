@@ -53,7 +53,7 @@ public class TrajectoriesTraditionalBlueLeft_Solo {
 
         // get 2nd wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-34, 16, Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-35, 16, Math.toRadians(0)), Math.toRadians(180))
                 .build());
 
         // place 2nd wobble
@@ -90,7 +90,7 @@ public class TrajectoriesTraditionalBlueLeft_Solo {
 
         // get 2nd wobble
         trajectories.add(makeTrajectoryBuilder(trajectories, Math.toRadians(180), FAST_VEL_CONSTRAINT, FAST_ACCEL_CONSTRAINT)
-                .splineToSplineHeading(new Pose2d(-34, 16, Math.toRadians(0)), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(-35, 16, Math.toRadians(0)), Math.toRadians(180))
                 .build());
 
         // place 2nd wobble
